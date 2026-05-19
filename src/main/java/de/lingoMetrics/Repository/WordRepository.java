@@ -18,11 +18,11 @@ public class WordRepository {
     private List<Word> adjektive;
     public void load() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        File Adjektiv = new File("src/Datasets/Adjektiv.json");
-        File Fillwords = new File("src/Datasets/Fillwords.json");
-        File sentiWS = new File("src/Datasets/sentiWS.json");
-        File Stopwords = new File("src/Datasets/Stopwords.json");
-        File Verb = new File("src/Datasets/Verb.json");
+        File Adjektiv = new File("src/main/resources/Datasets/Adjektiv.json");
+        File Fillwords = new File("src/main/resources/Datasets/Fillwords.json");
+        File sentiWS = new File("src/main/resources/Datasets/sentiWS.json");
+        File Stopwords = new File("src/main/resources/Datasets/Stopwords.json");
+        File Verb = new File("src/main/resources/Datasets/Verb.json");
         this.funktionswoerter = mapper.readValue(Stopwords, new TypeReference<List<Word>>(){});
         this.fuellwoerter = mapper.readValue(Stopwords, new TypeReference<List<Word>>(){});
         this.sentimentindex = mapper.readValue(Stopwords, new TypeReference<List<Word>>(){});
