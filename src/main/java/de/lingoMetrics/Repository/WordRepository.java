@@ -4,19 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.lingoMetrics.Enums.WortTyp;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 
 public class WordRepository {
-    private List<Word> funktionswoerter;
-    private List<Word> fuellwoerter;
-    private List<Word> sentimentindex;
-    private List<Word> verben;
-    private List<Word> adjektive;
+    private List<DBword> funktionswoerter;
+    private List<DBword> fuellwoerter;
+    private List<DBword> sentimentindex;
+    private List<DBword> verben;
+    private List<DBword> adjektive;
     public void load() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         try(InputStream Adjektiv = getClass().getResourceAsStream("/Datasets/Adjektiv.json");
@@ -24,11 +22,11 @@ public class WordRepository {
             InputStream sentiWS = getClass().getResourceAsStream("/Datasets/sentiWS.json");
             InputStream Stopwords = getClass().getResourceAsStream("/Datasets/Stopwords.json");
             InputStream Verb = getClass().getResourceAsStream("/Datasets/Verb.json");){
-            this.funktionswoerter = mapper.readValue(Stopwords, new TypeReference<List<Word>>(){});
-            this.fuellwoerter = mapper.readValue(Fillwords, new TypeReference<List<Word>>(){});
-            this.sentimentindex = mapper.readValue(sentiWS, new TypeReference<List<Word>>(){});
-            this.adjektive = mapper.readValue(Adjektiv, new TypeReference<List<Word>>(){});
-            this.verben = mapper.readValue(Verb, new TypeReference<List<Word>>(){});
+            this.funktionswoerter = mapper.readValue(Stopwords, new TypeReference<List<DBword>>(){});
+            this.fuellwoerter = mapper.readValue(Fillwords, new TypeReference<List<DBword>>(){});
+            this.sentimentindex = mapper.readValue(sentiWS, new TypeReference<List<DBword>>(){});
+            this.adjektive = mapper.readValue(Adjektiv, new TypeReference<List<DBword>>(){});
+            this.verben = mapper.readValue(Verb, new TypeReference<List<DBword>>(){});
         }
     }
 
@@ -50,7 +48,7 @@ public class WordRepository {
     }
 
     public double getSentiment(String wort){
-        List<Word> sentimentWort = sentimentindex.stream()
+        List<DBword> sentimentWort = sentimentindex.stream()
                 .filter(w -> w.getWort().equals(wort))
                 .toList();
         if(sentimentWort.isEmpty()){
