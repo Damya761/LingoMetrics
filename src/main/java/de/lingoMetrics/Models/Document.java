@@ -1,8 +1,7 @@
 package de.lingoMetrics.Models;
 
-import de.lingoMetrics.Enums.InterpunktiosProfil; // Falls das ein Enum/eine Klasse ist
-
 import java.util.List;
+import java.util.Map;
 
 public class Document {
     // Strukturelle Beziehungen (Listen)
@@ -11,7 +10,7 @@ public class Document {
     private List<Satz> saetze;   // Flache Liste aller Sätze im Dokument
 
     // Berechnete Metriken
-    private InterpunktiosProfil interpunktion;
+    private Map<String, Long> interpunktion;
     private double wortlaengenverteilung;
     private double mittlereSatzlaenge;
     private double satzlaengenunterschied;
@@ -37,8 +36,8 @@ public class Document {
     public void setSaetze(List<Satz> saetze) { this.saetze = saetze; }
     public void addSatz(Satz satz) { this.saetze.add(satz); }
 
-    public InterpunktiosProfil getInterpunktion() { return interpunktion; }
-    public void setInterpunktion(InterpunktiosProfil interpunktion) { this.interpunktion = interpunktion; }
+    public Map<String, Long> getInterpunktion() { return interpunktion; }
+    public void setInterpunktion(Map<String, Long> interpunktion) { this.interpunktion = interpunktion; }
 
     public double getWortlaengenverteilung() { return wortlaengenverteilung; }
     public void setWortlaengenverteilung(double wortlaengenverteilung) { this.wortlaengenverteilung = wortlaengenverteilung; }
