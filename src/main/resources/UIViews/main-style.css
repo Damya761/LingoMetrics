@@ -1,0 +1,204 @@
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Arial", sans-serif;
+    -fx-font-size: 13px;
+}
+
+.app-root {
+    -fx-background-color: linear-gradient(to bottom right, #edf3ff, #dfeaff);
+}
+
+.main-tabs {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.main-tabs > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.main-tabs > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #c8d9fb;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 8 18 8 18;
+}
+
+.main-tabs > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #ffffff;
+}
+
+.main-tabs > .tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-color: #b9ccef;
+    -fx-border-radius: 14;
+}
+
+.tab-content {
+    -fx-background-color: transparent;
+}
+
+.input-row .text-area {
+    -fx-pref-height: 250;
+}
+
+.primary-input,
+.output-area {
+    -fx-background-color: #f4f8ff;
+    -fx-background-radius: 10;
+    -fx-border-color: #9fb8e6;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.2;
+    -fx-padding: 10;
+    -fx-text-fill: #10213f;
+    -fx-prompt-text-fill: #576b8f;
+}
+
+.primary-input:focused,
+.output-area:focused {
+    -fx-border-color: #2f66e3;
+    -fx-border-width: 1.6;
+    -fx-background-color: #ffffff;
+}
+
+.upload-dropzone {
+    -fx-background-color: #f6f9ff;
+    -fx-background-radius: 12;
+    -fx-border-color: #7ea0df;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-border-style: dashed;
+    -fx-padding: 16;
+    -fx-min-height: 250;
+}
+
+.upload-dropzone.compact {
+    -fx-background-color: #f6f9ff;
+    -fx-background-radius: 12;
+    -fx-border-color: #7ea0df;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-border-style: dashed;
+    -fx-padding: 10;
+    -fx-min-height: 45;
+}
+
+.compare-dropzone {
+    -fx-background-color: #f6f9ff;
+    -fx-background-radius: 12;
+    -fx-border-color: #7ea0df;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-border-style: dashed;
+    -fx-padding: 10;
+    -fx-min-height: 45;
+}
+
+.upload-dropzone-content {
+    -fx-alignment: center;
+}
+
+.upload-icon-wrapper {
+    -fx-background-color: #dbe7ff;
+    -fx-background-radius: 999;
+    -fx-padding: 10;
+}
+
+.upload-icon {
+    -fx-fill: #1f4fbf;
+    -fx-scale-x: 1.4;
+    -fx-scale-y: 1.4;
+}
+
+.upload-title {
+    -fx-text-fill: #15377d;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+}
+
+.upload-subtitle {
+    -fx-text-fill: #4d648f;
+}
+
+.drop-button {
+    -fx-background-color: #e2ecff;
+    -fx-text-fill: #153a8e;
+    -fx-background-radius: 9;
+    -fx-padding: 7 14 7 14;
+    -fx-font-weight: 600;
+}
+
+.drop-button:hover {
+    -fx-background-color: #d2e2ff;
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-background-radius: 10;
+    -fx-padding: 9 16 9 16;
+    -fx-font-weight: 600;
+}
+
+.primary-button {
+    -fx-background-color: #2d5ed3;
+    -fx-text-fill: #ffffff;
+}
+
+.primary-button:hover {
+    -fx-background-color: #214db6;
+}
+
+.secondary-button {
+    -fx-background-color: #d7e5ff;
+    -fx-text-fill: #163c8f;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #c4d8ff;
+}
+
+.style-selector {
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #eef4ff);
+    -fx-background-radius: 11;
+    -fx-border-color: #86a7dd;
+    -fx-border-radius: 11;
+    -fx-border-width: 1.4;
+    -fx-padding: 2 8 2 8;
+    -fx-pref-height: 36;
+}
+
+.style-selector:focused {
+    -fx-border-color: #2f66e3;
+    -fx-border-width: 1.6;
+    -fx-background-color: #ffffff;
+}
+
+.style-selector .list-cell {
+    -fx-text-fill: #10213f;
+    -fx-padding: 0 8 0 8;
+}
+
+.compare-style-row {
+    -fx-background-color: #f4f8ff;
+    -fx-background-radius: 12;
+    -fx-border-color: #d0dcf0;
+    -fx-border-radius: 12;
+    -fx-padding: 10 12 10 12;
+    -fx-alignment: center-left;
+}
+
+.compare-style-label {
+    -fx-text-fill: #163c8f;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 0 6 0 0;
+}
+
+.compare-style-selector {
+    -fx-pref-width: 190;
+}
+
+.action-row > .label {
+    -fx-text-fill: #15377d;
+    -fx-font-weight: 600;
+    -fx-padding: 0 2 0 0;
+}
