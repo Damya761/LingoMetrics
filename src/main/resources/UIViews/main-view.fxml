@@ -76,7 +76,8 @@
                                         <StackPane styleClass="upload-icon-wrapper" >
 
                                             <SVGPath
-                                                    content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"/>
+                                                    content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
+                                                    styleClass="upload-icon" />
 
                                         </StackPane>
 
@@ -85,7 +86,8 @@
 
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
-                                        <Button styleClass="drop-button"/>
+                                        <Button styleClass="drop-button"
+                                                text="Wähle eine Datei." />
                                     </VBox>
                                 </StackPane>
 
@@ -159,7 +161,8 @@
                                           spacing="8.0" >
 
                                         <StackPane styleClass="upload-icon-wrapper">
-                                            <SVGPath styleClass="upload-icon"/>
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z" />
                                         </StackPane>
 
                                         <Label styleClass="upload-title"
@@ -168,7 +171,8 @@
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
 
-                                        <Button styleClass="drop-button"/>
+                                        <Button styleClass="drop-button"
+                                                text="Wähle eine Datei." />
                                     </VBox>
                                 </StackPane>
                                 <rowConstraints>
@@ -269,7 +273,8 @@
                                           spacing="4.0" >
 
                                         <StackPane styleClass="upload-icon-wrapper">
-                                            <SVGPath styleClass="upload-icon"/>
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"  />
                                         </StackPane>
 
                                         <Label styleClass="upload-title"
@@ -292,7 +297,8 @@
                                           spacing="4.0">
 
                                         <StackPane styleClass="upload-icon-wrapper">
-                                            <SVGPath styleClass="upload-icon"/>
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z" />
                                         </StackPane>
 
                                         <Label styleClass="upload-title"
