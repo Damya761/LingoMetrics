@@ -103,6 +103,16 @@ public class MainViewController {
         sb.append("Mittlere Satzlänge: ").append(r.getMittlereSatzlaenge()).append("\n");
         sb.append("Type-Token-Ratio: ").append(r.getTypeTokenRatio()).append("\n");
         sb.append("Lesbarkeitsindex: ").append(r.getLesbarkeitsindex()).append("\n");
+        if (r.hasAuswertung()) {
+            sb.append("Score: ").append(r.getScore()).append("\n");
+            sb.append("Bewertung: ").append(r.getGesamtBewertung()).append("\n");
+            if (!r.getHinweise().isEmpty()) {
+                sb.append("Hinweise:\n");
+                for (String hinweis : r.getHinweise()) {
+                    sb.append("- ").append(hinweis).append("\n");
+                }
+            }
+        }
         return sb.toString();
     }
 
