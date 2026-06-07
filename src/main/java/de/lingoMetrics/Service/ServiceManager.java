@@ -1,7 +1,7 @@
 package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
-import de.lingoMetrics.Repository.WordRepository;
+import de.lingoMetrics.repository.WordRepository;
 import de.lingoMetrics.Service.analysis.TextStatisticsService;
 
 import java.io.IOException;
