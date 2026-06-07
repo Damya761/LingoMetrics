@@ -12,6 +12,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.lingoMetrics.UILogik.MainViewController"
+            fx:id="mainPane"
             prefHeight="400.0"
             prefWidth="600.0"
             stylesheets="@main-style.css"
@@ -87,7 +88,8 @@
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei." />
+                                                text="Wähle eine Datei."
+                                                onAction="#onClickSelectFileToAnalyze" />
                                     </VBox>
                                 </StackPane>
 
@@ -172,7 +174,8 @@
                                                text="Klicke, um eine Datei auszuwählen." />
 
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei." />
+                                                text="Wähle eine Datei."
+                                                onAction="#onClickSelectFileToAnalyze" />
                                     </VBox>
                                 </StackPane>
                                 <rowConstraints>
