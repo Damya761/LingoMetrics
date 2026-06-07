@@ -1,4 +1,4 @@
-package de.lingoMetrics.Repository;
+package de.lingoMetrics.repository;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
