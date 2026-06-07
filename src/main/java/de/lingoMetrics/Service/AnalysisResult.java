@@ -1,4 +1,4 @@
-package de.lingoMetrics.services;
+package de.lingoMetrics.Service;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package de.lingoMetrics.services;
+package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.repository.ReferenzRepository;
