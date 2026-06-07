@@ -219,7 +219,7 @@
                         </VBox>
                     </content>
                 </Tab>
-
+<!--
                 <Tab styleClass="app-tab"
                      text="Vergeleich von zwei Texten">
                     <content>
@@ -329,7 +329,7 @@
                                       VBox.vgrow="SOMETIMES" />
                         </VBox>
                     </content>
-                </Tab>
+                </Tab> -->
             </tabs>
         </TabPane>
     </children>

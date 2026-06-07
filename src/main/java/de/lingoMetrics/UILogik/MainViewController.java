@@ -15,18 +15,18 @@ public class MainViewController {
 
     @FXML
     private AnchorPane mainPane;
-    public String textToAnalyze;
-    public String textToCompare;
+    public Object textToAnalyze;
+    /*public Object textToCompare;*/
 
     @FXML
     private void onClickSelectFileToAnalyze() {
         textToAnalyze = openFileChooser();
     }
 
-    @FXML
+    /*@FXML
     private void onClickSelectFileToCompare() {
         textToCompare = openFileChooser();
-    }
+    }*/
 
     private String openFileChooser() {
         FileChooser fileChooser = new FileChooser();
