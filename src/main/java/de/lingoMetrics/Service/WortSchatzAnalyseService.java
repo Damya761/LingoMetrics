@@ -3,7 +3,7 @@ package de.lingoMetrics.Service;
 import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Wort;
-import de.lingoMetrics.Repository.WordRepository;
+import de.lingoMetrics.repository.WordRepository;
 
 import java.util.HashMap;
 
@@ -37,11 +37,11 @@ public class WortSchatzAnalyseService {
             if(wort.getWortart().equals(WortTyp.TYP_ADJEKTIV)){
                 adjektive++;
             }
-            if(wort.getWortart().equals(WortTyp.TYP_ADJEKTIV)){
+            if(wort.getWortart().equals(WortTyp.TYP_VERB)){
                 verben++;
             }
         }
-        document.setAdjektivVerbQuotient(adjektive/verben);
+        document.setAdjektivVerbQuotient(verben == 0 ? 0.0 : (double) adjektive / verben);
     }
 
     private void sentimentAnalyse(Document document){
