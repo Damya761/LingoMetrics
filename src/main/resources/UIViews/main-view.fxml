@@ -45,27 +45,31 @@
 
                                 <columnConstraints>
 
-                                    <ColumnConstraints
-                                            hgrow="ALWAYS"
-                                            percentWidth="50.0" />
+                                        <ColumnConstraints
+                                                    hgrow="ALWAYS"
+                                                    percentWidth="70.0" />
 
-                                    <ColumnConstraints
-                                            hgrow="ALWAYS"
-                                            percentWidth="50.0" />
+                                            <ColumnConstraints
+                                                    hgrow="ALWAYS"
+                                                    percentWidth="30.0" />
 
                                 </columnConstraints>
 
                                 <TextArea fx:id="textArea"
                                         maxWidth="1.7976931348623157E308"
-                                        prefRowCount="12"
+                                        prefRowCount="18"
                                         promptText="Füge hier deinen Text ein."
                                         styleClass="primary-input" wrapText="true"
                                         GridPane.columnIndex="0"
                                         GridPane.hgrow="ALWAYS"
                                         GridPane.vgrow="ALWAYS" />
 
-                                <StackPane styleClass="upload-dropzone"
-                                           onMouseClicked="#openFileChooser"
+                                <StackPane fx:id="dropzoneSimple" styleClass="upload-dropzone"
+                                           onMouseClicked="#openFileChooserTab1"
+                                           onDragOver="#handleDragOverTab1"
+                                           onDragEntered="#handleDragEnteredTab1"
+                                           onDragExited="#handleDragExitedTab1"
+                                           onDragDropped="#handleDragDroppedTab1"
                                            maxWidth="1.7976931348623157E308"
                                            GridPane.columnIndex="1"
                                            GridPane.hgrow="ALWAYS"
@@ -88,9 +92,11 @@
 
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
-                                        <Button styleClass="drop-button"
-                                                text="Wähle eine Datei."
-                                                onAction="#openFileChooser" />
+                                        <HBox spacing="8.0">
+                                            <Label fx:id="fileLabelSimple" text="Keine Datei gewählt" />
+                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab1" />
+                                            <Button styleClass="secondary-button" text="Entfernen" onAction="#removeSelectedFileSimple" />
+                                        </HBox>
                                     </VBox>
                                 </StackPane>
 
@@ -112,10 +118,10 @@
 
                             <TextArea fx:id="outputArea" styleClass="output-area"
                                       editable="false"
-                                      prefRowCount="5"
+                                      prefRowCount="10"
                                       promptText="Hier findest du die Metriken für deinen Text."
                                       wrapText="true"
-                                      VBox.vgrow="SOMETIMES" />
+                                      VBox.vgrow="ALWAYS" />
                         </VBox>
                     </content>
                 </Tab>
@@ -137,25 +143,29 @@
                                       hgap="14.0"
                                       VBox.vgrow="ALWAYS">
                                 <columnConstraints>
-                                    <ColumnConstraints
-                                            hgrow="ALWAYS"
-                                            percentWidth="50.0" />
-                                    <ColumnConstraints
-                                            hgrow="ALWAYS"
-                                            percentWidth="50.0" />
+                                        <ColumnConstraints
+                                                    hgrow="ALWAYS"
+                                                    percentWidth="70.0" />
+                                            <ColumnConstraints
+                                                    hgrow="ALWAYS"
+                                                    percentWidth="30.0" />
                                 </columnConstraints>
 
                                 <TextArea fx:id="textAreaCompare" styleClass="primary-input"
                                           maxWidth="1.7976931348623157E308"
-                                          prefRowCount="12"
+                                          prefRowCount="18"
                                           promptText="Füge hier deinen Text ein."
                                           wrapText="true"
                                           GridPane.columnIndex="0"
                                           GridPane.hgrow="ALWAYS"
                                           GridPane.vgrow="ALWAYS" />
 
-                                <StackPane styleClass="upload-dropzone"
-                                           onMouseClicked="#openFileChooser"
+                                <StackPane fx:id="dropzoneCompare" styleClass="upload-dropzone"
+                                           onMouseClicked="#openFileChooserTab2"
+                                           onDragOver="#handleDragOverTab2"
+                                           onDragEntered="#handleDragEnteredTab2"
+                                           onDragExited="#handleDragExitedTab2"
+                                           onDragDropped="#handleDragDroppedTab2"
                                            maxWidth="1.7976931348623157E308"
                                            GridPane.columnIndex="1"
                                            GridPane.hgrow="ALWAYS"
@@ -176,9 +186,11 @@
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
 
-                                        <Button styleClass="drop-button"
-                                                text="Wähle eine Datei."
-                                                onAction="#openFileChooser" />
+                                        <HBox spacing="8.0">
+                                            <Label fx:id="fileLabelCompare" text="Keine Datei gewählt" />
+                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab2" />
+                                            <Button styleClass="secondary-button" text="Entfernen" onAction="#removeSelectedFileCompare" />
+                                        </HBox>
                                     </VBox>
                                 </StackPane>
                                 <rowConstraints>
@@ -219,10 +231,10 @@
 
                             <TextArea fx:id="outputAreaCompare" styleClass="output-area"
                                       editable="false"
-                                      prefRowCount="5"
+                                      prefRowCount="10"
                                       promptText="Hier findest du die Metriken für deinen Text verglichen mi denen des gewählten Textstils."
                                       wrapText="true"
-                                      VBox.vgrow="SOMETIMES" />
+                                      VBox.vgrow="ALWAYS" />
                         </VBox>
                     </content>
                 </Tab>
