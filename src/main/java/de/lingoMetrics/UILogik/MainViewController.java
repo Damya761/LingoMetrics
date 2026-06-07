@@ -8,6 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
 import de.lingoMetrics.Service.ServiceManager;
 
 
@@ -30,7 +34,8 @@ public class MainViewController {
     private AnchorPane mainPane;
 
     //save path to selectedFile
-    private String selectedFile;
+    private String selectedFileSimple;
+    private String selectedFileCompare;
 
     @FXML
     private javafx.scene.control.TextArea textArea;
@@ -47,12 +52,24 @@ public class MainViewController {
     @FXML
     private javafx.scene.control.TextArea outputAreaCompare;
 
+    @FXML
+    private javafx.scene.control.Label fileLabelSimple;
+
+    @FXML
+    private javafx.scene.control.Label fileLabelCompare;
+
+    @FXML
+    private StackPane dropzoneSimple;
+
+    @FXML
+    private StackPane dropzoneCompare;
+
     // Analyze - simple (first tab)
     @FXML
     private void onClickAnalyzeSimple() {
         String text = null;
-        if (selectedFile != null) {
-            text = readFile(selectedFile);
+        if (selectedFileSimple != null) {
+            text = readFile(selectedFileSimple);
         } else if (textArea != null) {
             text = textArea.getText();
         }
@@ -69,12 +86,92 @@ public class MainViewController {
         }
     }
 
+    /* Drag & Drop handlers for Tab1 */
+    @FXML
+    private void handleDragOverTab1(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY);
+        }
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragEnteredTab1(DragEvent event) {
+        if (dropzoneSimple != null) dropzoneSimple.getStyleClass().add("drag-over");
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragExitedTab1(DragEvent event) {
+        if (dropzoneSimple != null) dropzoneSimple.getStyleClass().remove("drag-over");
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragDroppedTab1(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) {
+            File file = db.getFiles().get(0);
+            selectedFileSimple = file.getAbsolutePath();
+            if (fileLabelSimple != null) {
+                fileLabelSimple.setText(file.getName());
+                if (!fileLabelSimple.getStyleClass().contains("file-selected")) fileLabelSimple.getStyleClass().add("file-selected");
+            }
+            if (dropzoneSimple != null && !dropzoneSimple.getStyleClass().contains("selected")) dropzoneSimple.getStyleClass().add("selected");
+            success = true;
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
+
+    /* Drag & Drop handlers for Tab2 */
+    @FXML
+    private void handleDragOverTab2(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY);
+        }
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragEnteredTab2(DragEvent event) {
+        if (dropzoneCompare != null) dropzoneCompare.getStyleClass().add("drag-over");
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragExitedTab2(DragEvent event) {
+        if (dropzoneCompare != null) dropzoneCompare.getStyleClass().remove("drag-over");
+        event.consume();
+    }
+
+    @FXML
+    private void handleDragDroppedTab2(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) {
+            File file = db.getFiles().get(0);
+            selectedFileCompare = file.getAbsolutePath();
+            if (fileLabelCompare != null) {
+                fileLabelCompare.setText(file.getName());
+                if (!fileLabelCompare.getStyleClass().contains("file-selected")) fileLabelCompare.getStyleClass().add("file-selected");
+            }
+            if (dropzoneCompare != null && !dropzoneCompare.getStyleClass().contains("selected")) dropzoneCompare.getStyleClass().add("selected");
+            success = true;
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
+
     // Analyze and compare (second tab)
     @FXML
     private void onClickAnalyzeCompare() {
         String text = null;
-        if (selectedFile != null) {
-            text = readFile(selectedFile);
+        if (selectedFileCompare != null) {
+            text = readFile(selectedFileCompare);
         } else if (textAreaCompare != null) {
             text = textAreaCompare.getText();
         }
@@ -103,6 +200,32 @@ public class MainViewController {
         sb.append("Mittlere Satzlänge: ").append(r.getMittlereSatzlaenge()).append("\n");
         sb.append("Type-Token-Ratio: ").append(r.getTypeTokenRatio()).append("\n");
         sb.append("Lesbarkeitsindex: ").append(r.getLesbarkeitsindex()).append("\n");
+        return sb.toString();
+    }
+
+    //choose file and save path
+    @FXML
+    private void openFileChooserTab1() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Textdatei auswählen");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Textdateien", "*.txt")
+        );
+        Stage stage = (Stage) mainPane.getScene().getWindow();
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            selectedFileSimple = file.getAbsolutePath();
+            if (fileLabelSimple != null) {
+                fileLabelSimple.setText(file.getName());
+                if (!fileLabelSimple.getStyleClass().contains("file-selected")) fileLabelSimple.getStyleClass().add("file-selected");
+            }
+            if (dropzoneSimple != null && !dropzoneSimple.getStyleClass().contains("selected")) dropzoneSimple.getStyleClass().add("selected");
+        }
+    }
+
+    @FXML
+    private void openFileChooserTab2() {
         if (r.hasAuswertung()) {
             sb.append("Score: ").append(r.getScore()).append("\n");
             sb.append("Bewertung: ").append(r.getGesamtBewertung()).append("\n");
@@ -128,8 +251,33 @@ public class MainViewController {
         Stage stage = (Stage) mainPane.getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            selectedFile = file.getAbsolutePath();
+            selectedFileCompare = file.getAbsolutePath();
+            if (fileLabelCompare != null) {
+                fileLabelCompare.setText(file.getName());
+                if (!fileLabelCompare.getStyleClass().contains("file-selected")) fileLabelCompare.getStyleClass().add("file-selected");
+            }
+            if (dropzoneCompare != null && !dropzoneCompare.getStyleClass().contains("selected")) dropzoneCompare.getStyleClass().add("selected");
         }
+    }
+
+    @FXML
+    private void removeSelectedFileSimple() {
+        selectedFileSimple = null;
+        if (fileLabelSimple != null) {
+            fileLabelSimple.setText("Keine Datei gewählt");
+            fileLabelSimple.getStyleClass().remove("file-selected");
+        }
+        if (dropzoneSimple != null) dropzoneSimple.getStyleClass().remove("selected");
+    }
+
+    @FXML
+    private void removeSelectedFileCompare() {
+        selectedFileCompare = null;
+        if (fileLabelCompare != null) {
+            fileLabelCompare.setText("Keine Datei gewählt");
+            fileLabelCompare.getStyleClass().remove("file-selected");
+        }
+        if (dropzoneCompare != null) dropzoneCompare.getStyleClass().remove("selected");
     }
 
     // read file by absolute path
