@@ -248,7 +248,7 @@ public class MainViewController {
 
     //choose file and save path
     @FXML
-    private void openFileChooserTab() {
+    private void openFileChooserTab1() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -267,9 +267,10 @@ public class MainViewController {
         }
     }
 
+
     //choose file and save path
     @FXML
-    private void openFileChooser() {
+    private void openFileChooserTab2() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
