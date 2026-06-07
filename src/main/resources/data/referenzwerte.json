@@ -1,0 +1,6 @@
+{
+  "idealeSatzlaenge": 18.0,
+  "maxFuellwortAnteil": 0.08,
+  "minTypeTokenRatio": 0.45,
+  "tolerance": 5.0
+}

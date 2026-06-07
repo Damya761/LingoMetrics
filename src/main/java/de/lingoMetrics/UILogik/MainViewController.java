@@ -226,6 +226,22 @@ public class MainViewController {
 
     @FXML
     private void openFileChooserTab2() {
+        if (r.hasAuswertung()) {
+            sb.append("Score: ").append(r.getScore()).append("\n");
+            sb.append("Bewertung: ").append(r.getGesamtBewertung()).append("\n");
+            if (!r.getHinweise().isEmpty()) {
+                sb.append("Hinweise:\n");
+                for (String hinweis : r.getHinweise()) {
+                    sb.append("- ").append(hinweis).append("\n");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    //choose file and save path
+    @FXML
+    private void openFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));

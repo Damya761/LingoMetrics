@@ -1,13 +1,12 @@
 package de.lingoMetrics.Service;
 
-import de.lingoMetrics.Service.AnalysisResult;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.repository.ReferenzRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AuswertungsService {
 
@@ -17,14 +16,13 @@ public class AuswertungsService {
         this.referenzRepository = referenzRepository;
     }
 
-    public AnalysisResult auswertung(Document doc) {
+    public int calculateScore(Document doc, List<String> hinweise) {
+        Objects.requireNonNull(doc, "Document must not be null.");
+        Objects.requireNonNull(hinweise, "Hinweise list must not be null.");
+
         Map<String, Double> metriken = aggregateMetrics(doc);
-        List<String> hinweise = new ArrayList<>();
 
-        int score = calculateScore(metriken, hinweise);
-        String gesamtBewertung = determineRating(score);
-
-        return new AnalysisResult(metriken, score, gesamtBewertung, hinweise);
+        return calculateScore(metriken, hinweise);
     }
 
     private Map<String, Double> aggregateMetrics(Document doc) {
@@ -156,7 +154,7 @@ public class AuswertungsService {
         return 0;
     }
 
-    private String determineRating(int score) {
+    public String determineRating(int score) {
         if (score >= 90) return "Sehr gut";
         if (score >= 75) return "Gut";
         if (score >= 60) return "Befriedigend";

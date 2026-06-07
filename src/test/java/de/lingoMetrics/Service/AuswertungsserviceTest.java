@@ -1,16 +1,18 @@
 package de.lingoMetrics.Service;
 
-import de.lingoMetrics.Service.AnalysisResult;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.repository.ReferenzRepository;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuswertungsServiceTest {
 
     @Test
-    void auswertung_gibtScore100UndKeineHinweiseZurueck_wennAlleMetrikenGutSind() {
+    void calculateScore_gibtScore100UndKeineHinweiseZurueck_wennAlleMetrikenGutSind() {
         AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
 
         Document document = new Document();
@@ -18,18 +20,16 @@ class AuswertungsServiceTest {
         document.setFuellwoerterAnteil(0.05);
         document.setTypeTokenRatio(0.60);
 
-        AnalysisResult result = service.auswertung(document);
+        List<String> hinweise = new ArrayList<>();
+        int score = service.calculateScore(document, hinweise);
 
-        assertEquals(100, result.getScore());
-        assertTrue(result.getHinweise().isEmpty());
-
-        assertEquals(18.0, result.getMetriken().get("Mittlere Satzlänge"));
-        assertEquals(0.05, result.getMetriken().get("Füllwortanteil"));
-        assertEquals(0.60, result.getMetriken().get("Type-Token-Ratio"));
+        assertEquals(100, score);
+        assertEquals("Sehr gut", service.determineRating(score));
+        assertTrue(hinweise.isEmpty());
     }
 
     @Test
-    void auswertung_ziehtPunkteAbUndErzeugtHinweise_wennAlleMetrikenSchlechtSind() {
+    void calculateScore_ziehtPunkteAbUndErzeugtHinweise_wennAlleMetrikenSchlechtSind() {
         AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
 
         Document document = new Document();
@@ -37,24 +37,20 @@ class AuswertungsServiceTest {
         document.setFuellwoerterAnteil(0.12);
         document.setTypeTokenRatio(0.30);
 
-        AnalysisResult result = service.auswertung(document);
+        List<String> hinweise = new ArrayList<>();
+        int score = service.calculateScore(document, hinweise);
 
-        assertEquals(60, result.getScore());
-        assertEquals(3, result.getHinweise().size());
+        assertEquals(60, score);
+        assertEquals("Befriedigend", service.determineRating(score));
+        assertEquals(3, hinweise.size());
 
-        assertTrue(result.getHinweise().contains(
-                "Die durchschnittliche Satzlänge weicht deutlich vom Referenzwert ab."
-        ));
-        assertTrue(result.getHinweise().contains(
-                "Der Text enthält vergleichsweise viele Füllwörter."
-        ));
-        assertTrue(result.getHinweise().contains(
-                "Die Wortvielfalt ist eher niedrig."
-        ));
+        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("Referenzwert")));
+        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("vergleichsweise")));
+        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("Wortvielfalt")));
     }
 
     @Test
-    void auswertung_ziehtNurFuellwortPunkteAb_wennNurFuellwortanteilZuHochIst() {
+    void calculateScore_ziehtNurFuellwortPunkteAb_wennNurFuellwortanteilZuHochIst() {
         AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
 
         Document document = new Document();
@@ -62,13 +58,69 @@ class AuswertungsServiceTest {
         document.setFuellwoerterAnteil(0.10);
         document.setTypeTokenRatio(0.60);
 
-        AnalysisResult result = service.auswertung(document);
+        List<String> hinweise = new ArrayList<>();
+        int score = service.calculateScore(document, hinweise);
 
-        assertEquals(85, result.getScore());
-        assertEquals(1, result.getHinweise().size());
-        assertTrue(result.getHinweise().contains(
-                "Der Text enthält vergleichsweise viele Füllwörter."
-        ));
+        assertEquals(85, score);
+        assertEquals("Gut", service.determineRating(score));
+        assertEquals(1, hinweise.size());
+        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("vergleichsweise")));
+    }
+
+    @Test
+    void analyse_speichertAuswertungImServiceManagerResult_wennComparisonAktivIst() {
+        ServiceManager serviceManager = new ServiceManager(
+                new TextStrukturService(),
+                List.of(document -> {
+                    document.setMittlereSatzlaenge(30.0);
+                    document.setFuellwoerterAnteil(0.12);
+                    document.setTypeTokenRatio(0.30);
+                }),
+                new AuswertungsService(new FakeReferenzRepository())
+        );
+
+        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(
+                "Hallo Welt.",
+                "Artikel",
+                false,
+                true
+        );
+
+        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+
+        assertTrue(result.isComparison());
+        assertTrue(result.hasAuswertung());
+        assertEquals(60, result.getScore());
+        assertEquals("Befriedigend", result.getGesamtBewertung());
+        assertEquals(3, result.getHinweise().size());
+    }
+
+    @Test
+    void analyse_laesstAuswertungLeer_wennComparisonInaktivIst() {
+        ServiceManager serviceManager = new ServiceManager(
+                new TextStrukturService(),
+                List.of(document -> {
+                    document.setMittlereSatzlaenge(30.0);
+                    document.setFuellwoerterAnteil(0.12);
+                    document.setTypeTokenRatio(0.30);
+                }),
+                new AuswertungsService(new FakeReferenzRepository())
+        );
+
+        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(
+                "Hallo Welt.",
+                null,
+                false,
+                false
+        );
+
+        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+
+        assertFalse(result.isComparison());
+        assertFalse(result.hasAuswertung());
+        assertNull(result.getScore());
+        assertNull(result.getGesamtBewertung());
+        assertTrue(result.getHinweise().isEmpty());
     }
 
     private static class FakeReferenzRepository implements ReferenzRepository {
