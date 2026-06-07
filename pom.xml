@@ -82,7 +82,20 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <argLine>--module-path ${{env.JAVAFX_HOME}}/lib --add-modules javafx.controls,javafx.fxml</argLine>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <argLine>--add-modules javafx.controls,javafx.fxml</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <argLine>--add-modules javafx.controls,javafx.fxml</argLine>
                 </configuration>
             </plugin>
 
@@ -122,4 +135,28 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <useUnlimitedThreads>true</useUnlimitedThreads>
+                            <argLine>--add-modules javafx.controls,javafx.fxml</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

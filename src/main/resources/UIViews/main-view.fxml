@@ -11,7 +11,6 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:id="mainPane"
             fx:controller="de.lingoMetrics.UILogik.MainViewController"
             prefHeight="400.0"
             prefWidth="600.0"
@@ -78,8 +77,7 @@
 
                                             <SVGPath
                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
-                                                    styleClass="upload-icon"
-                                                    onMouseClicked="#onClickSelectFileToAnalyze"/>
+                                                    styleClass="upload-icon" />
 
                                         </StackPane>
 
@@ -89,8 +87,7 @@
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei."
-                                                onAction="#onClickSelectFileToAnalyze"/>
+                                                text="Wähle eine Datei." />
                                     </VBox>
                                 </StackPane>
 
@@ -165,8 +162,7 @@
 
                                         <StackPane styleClass="upload-icon-wrapper">
                                             <SVGPath styleClass="upload-icon"
-                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
-                                                     onMouseClicked="#onClickSelectFileToAnalyze"/>
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z" />
                                         </StackPane>
 
                                         <Label styleClass="upload-title"
@@ -176,8 +172,7 @@
                                                text="Klicke, um eine Datei auszuwählen." />
 
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei."
-                                                onAction="#onClickSelectFileToAnalyze"/>
+                                                text="Wähle eine Datei." />
                                     </VBox>
                                 </StackPane>
                                 <rowConstraints>
@@ -224,7 +219,7 @@
                         </VBox>
                     </content>
                 </Tab>
-
+<!--
                 <Tab styleClass="app-tab"
                      text="Vergeleich von zwei Texten">
                     <content>
@@ -277,11 +272,9 @@
                                           alignment="CENTER"
                                           spacing="4.0" >
 
-
                                         <StackPane styleClass="upload-icon-wrapper">
                                             <SVGPath styleClass="upload-icon"
-                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
-                                                     onMouseClicked="#onClickSelectFileToAnalyze"/>
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"  />
                                         </StackPane>
 
                                         <Label styleClass="upload-title"
@@ -303,11 +296,10 @@
                                           alignment="CENTER"
                                           spacing="4.0">
 
-                                          <StackPane styleClass="upload-icon-wrapper">
-                                              <SVGPath styleClass="upload-icon"
-                                                       content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
-                                                       onMouseClicked="#onClickSelectFileToCompare"/>
-                                          </StackPane>
+                                        <StackPane styleClass="upload-icon-wrapper">
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z" />
+                                        </StackPane>
 
                                         <Label styleClass="upload-title"
                                                text="Ziehe die zweite Textdatei hierhin und lege sie ab." />
@@ -337,7 +329,7 @@
                                       VBox.vgrow="SOMETIMES" />
                         </VBox>
                     </content>
-                </Tab>
+                </Tab> -->
             </tabs>
         </TabPane>
     </children>
