@@ -211,7 +211,7 @@ public class MainViewController {
         appendLine(sb, "Mittleres Sentiment", formatDouble(r.getMittleresSentiment()));
         appendLine(sb, "Hapax Legomena", r.getHapaxLegomena());
         appendLine(sb, "Adjektiv-Verb-Quotient", formatDouble(r.getAdjektivVerbQuotient()));
-        appendLine(sb, "Mittlere Konkretheit", formatDouble(r.getMittlereKonkretheit()));
+        //appendLine(sb, "Mittlere Konkretheit", formatDouble(r.getMittlereKonkretheit()));
 
         sb.append("\nInterpunktion\n");
         if (r.getInterpunktion().isEmpty()) {
@@ -251,7 +251,11 @@ public class MainViewController {
     private void openFileChooserTab1() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File documents = new File(
+                System.getProperty("user.home"),
+                "Documents"
+        );
+        fileChooser.setInitialDirectory(documents);
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Textdateien", "*.txt")
         );
@@ -273,7 +277,11 @@ public class MainViewController {
     private void openFileChooserTab2() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        File documents = new File(
+                System.getProperty("user.home"),
+                "Documents"
+        );
+        fileChooser.setInitialDirectory(documents);
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Textdateien", "*.txt")
         );
