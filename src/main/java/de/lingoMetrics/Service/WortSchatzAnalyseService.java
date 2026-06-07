@@ -3,7 +3,7 @@ package de.lingoMetrics.Service;
 import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Wort;
-import de.lingoMetrics.repository.WordRepository;
+import de.lingoMetrics.Repository.WordRepository;
 
 import java.util.HashMap;
 

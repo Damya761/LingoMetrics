@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Locale;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -193,19 +194,61 @@ public class MainViewController {
     private String formatResult(ServiceManager.AnalysisResult r) {
         if (r == null) return "Keine Ergebnisse.";
         StringBuilder sb = new StringBuilder();
-        sb.append("Stil: ").append(r.getStiltype()).append("\n");
-        sb.append("Absätze: ").append(r.getAbsatzAnzahl()).append("\n");
-        sb.append("Sätze: ").append(r.getSatzAnzahl()).append("\n");
-        sb.append("Wörter: ").append(r.getWortAnzahl()).append("\n");
-        sb.append("Mittlere Satzlänge: ").append(r.getMittlereSatzlaenge()).append("\n");
-        sb.append("Type-Token-Ratio: ").append(r.getTypeTokenRatio()).append("\n");
-        sb.append("Lesbarkeitsindex: ").append(r.getLesbarkeitsindex()).append("\n");
+
+        sb.append("Basisdaten\n");
+        appendLine(sb, "Absätze", r.getAbsatzAnzahl());
+        appendLine(sb, "Sätze", r.getSatzAnzahl());
+        appendLine(sb, "Wörter", r.getWortAnzahl());
+
+        sb.append("\nMetriken\n");
+        appendLine(sb, "Wortlängenverteilung", formatDouble(r.getWortlaengenverteilung()));
+        appendLine(sb, "Mittlere Satzlänge", formatDouble(r.getMittlereSatzlaenge()));
+        appendLine(sb, "Satzlängenunterschied", formatDouble(r.getSatzlaengenunterschied()));
+        appendLine(sb, "Funktionswörteranteil", formatDouble(r.getFunktionswoerterAnteil()));
+        appendLine(sb, "Füllwortanteil", formatDouble(r.getFuellwoerterAnteil()));
+        appendLine(sb, "Type-Token-Ratio", formatDouble(r.getTypeTokenRatio()));
+        appendLine(sb, "Lesbarkeitsindex", formatDouble(r.getLesbarkeitsindex()));
+        appendLine(sb, "Mittleres Sentiment", formatDouble(r.getMittleresSentiment()));
+        appendLine(sb, "Hapax Legomena", r.getHapaxLegomena());
+        appendLine(sb, "Adjektiv-Verb-Quotient", formatDouble(r.getAdjektivVerbQuotient()));
+        appendLine(sb, "Mittlere Konkretheit", formatDouble(r.getMittlereKonkretheit()));
+
+        sb.append("\nInterpunktion\n");
+        if (r.getInterpunktion().isEmpty()) {
+            sb.append("- keine Satzzeichen erkannt\n");
+        } else {
+            r.getInterpunktion().forEach((zeichen, anzahl) ->
+                    sb.append("- ").append(zeichen).append(": ").append(anzahl).append("\n")
+            );
+        }
+
+        if (r.hasAuswertung()) {
+            sb.append("\nAuswertung\n");
+            appendLine(sb, "Score", r.getScore());
+            appendLine(sb, "Bewertung", r.getGesamtBewertung());
+            if (!r.getHinweise().isEmpty()) {
+                sb.append("Hinweise:\n");
+                for (String hinweis : r.getHinweise()) {
+                    sb.append("- ").append(hinweis).append("\n");
+                }
+            } else {
+                sb.append("Hinweise: keine\n");
+            }
+        }
         return sb.toString();
+    }
+
+    private void appendLine(StringBuilder sb, String label, Object value) {
+        sb.append(label).append(": ").append(value).append("\n");
+    }
+
+    private String formatDouble(double value) {
+        return String.format(Locale.GERMANY, "%.4f", value);
     }
 
     //choose file and save path
     @FXML
-    private void openFileChooserTab1() {
+    private void openFileChooserTab() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Textdatei auswählen");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -222,21 +265,6 @@ public class MainViewController {
             }
             if (dropzoneSimple != null && !dropzoneSimple.getStyleClass().contains("selected")) dropzoneSimple.getStyleClass().add("selected");
         }
-    }
-
-    @FXML
-    private void openFileChooserTab2() {
-        if (r.hasAuswertung()) {
-            sb.append("Score: ").append(r.getScore()).append("\n");
-            sb.append("Bewertung: ").append(r.getGesamtBewertung()).append("\n");
-            if (!r.getHinweise().isEmpty()) {
-                sb.append("Hinweise:\n");
-                for (String hinweis : r.getHinweise()) {
-                    sb.append("- ").append(hinweis).append("\n");
-                }
-            }
-        }
-        return sb.toString();
     }
 
     //choose file and save path

@@ -1,4 +1,4 @@
-package de.lingoMetrics.repository;
+package de.lingoMetrics.Repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
