@@ -53,13 +53,13 @@ public class ServiceManager {
     public AnalysisResult analyse(AnalysisRequest request) {
         validateRequest(request);
 
-        Document document = textStrukturService.createDocument(request.getRohtext());
+        Document document = textStrukturService.createDocument(request.getRawtext());
 
         for (Consumer<Document> analyseService : analyseServices) {
             analyseService.accept(document);
         }
 
-        return AnalysisResult.from(document, request.getStiltyp());
+        return AnalysisResult.from(document, request);
     }
 
     public AnalysisResult analyze(AnalysisRequest request) {
@@ -71,35 +71,77 @@ public class ServiceManager {
             throw new IllegalArgumentException("AnalysisRequest must not be null.");
         }
 
-        if (request.getRohtext() == null || request.getRohtext().trim().isEmpty()) {
+        if (request.getRawtext() == null || request.getRawtext().trim().isEmpty()) {
             throw new IllegalArgumentException("AnalysisRequest text must not be null or empty.");
+        }
+
+        if (request.isComparison() && (request.getStiltype() == null || request.getStiltype().trim().isEmpty())) {
+            throw new IllegalArgumentException("AnalysisRequest style type must not be null or empty for comparisons.");
         }
     }
 
     public static final class AnalysisRequest {
-        private final String rohtext;
-        private final String stiltyp;
+        private final String rawtext;
+        private final String stiltype;
+        private final boolean export;
+        private final boolean comparison;
+
+        public AnalysisRequest(String rawtext, String stiltype, boolean isExport, boolean isComparison) {
+            this.rawtext = rawtext;
+            this.stiltype = stiltype;
+            this.export = isExport;
+            this.comparison = isComparison;
+        }
 
         public AnalysisRequest(String rohtext, String stiltyp) {
-            this.rohtext = rohtext;
-            this.stiltyp = stiltyp;
+            this(rohtext, stiltyp, false, false);
+        }
+
+        public static AnalysisRequest of(String rawtext, String stiltype, boolean isExport, boolean isComparison) {
+            return new AnalysisRequest(rawtext, stiltype, isExport, isComparison);
         }
 
         public static AnalysisRequest of(String rohtext, String stiltyp) {
             return new AnalysisRequest(rohtext, stiltyp);
         }
 
+        public String getRawtext() {
+            return rawtext;
+        }
+
+        public String getRawText() {
+            return rawtext;
+        }
+
         public String getRohtext() {
-            return rohtext;
+            return rawtext;
+        }
+
+        public String getStiltype() {
+            return stiltype;
+        }
+
+        public String getStilType() {
+            return stiltype;
         }
 
         public String getStiltyp() {
-            return stiltyp;
+            return stiltype;
+        }
+
+        public boolean isExport() {
+            return export;
+        }
+
+        public boolean isComparison() {
+            return comparison;
         }
     }
 
     public static final class AnalysisResult {
-        private final String stiltyp;
+        private final String stiltype;
+        private final boolean export;
+        private final boolean comparison;
         private final int absatzAnzahl;
         private final int satzAnzahl;
         private final int wortAnzahl;
@@ -117,7 +159,9 @@ public class ServiceManager {
         private final double mittlereKonkretheit;
 
         private AnalysisResult(
-                String stiltyp,
+                String stiltype,
+                boolean isExport,
+                boolean isComparison,
                 int absatzAnzahl,
                 int satzAnzahl,
                 int wortAnzahl,
@@ -134,7 +178,9 @@ public class ServiceManager {
                 double adjektivVerbQuotient,
                 double mittlereKonkretheit
         ) {
-            this.stiltyp = stiltyp;
+            this.stiltype = stiltype;
+            this.export = isExport;
+            this.comparison = isComparison;
             this.absatzAnzahl = absatzAnzahl;
             this.satzAnzahl = satzAnzahl;
             this.wortAnzahl = wortAnzahl;
@@ -152,13 +198,15 @@ public class ServiceManager {
             this.mittlereKonkretheit = mittlereKonkretheit;
         }
 
-        private static AnalysisResult from(Document document, String stiltyp) {
+        private static AnalysisResult from(Document document, AnalysisRequest request) {
             Map<String, Long> interpunktion = document.getInterpunktion() == null
                     ? Map.of()
                     : document.getInterpunktion();
 
             return new AnalysisResult(
-                    stiltyp,
+                    request.getStiltype(),
+                    request.isExport(),
+                    request.isComparison(),
                     document.getAbsaetze() == null ? 0 : document.getAbsaetze().size(),
                     document.getSaetze() == null ? 0 : document.getSaetze().size(),
                     countNormaleWoerter(document),
@@ -189,8 +237,24 @@ public class ServiceManager {
                     .count();
         }
 
+        public String getStiltype() {
+            return stiltype;
+        }
+
+        public String getStilType() {
+            return stiltype;
+        }
+
         public String getStiltyp() {
-            return stiltyp;
+            return stiltype;
+        }
+
+        public boolean isExport() {
+            return export;
+        }
+
+        public boolean isComparison() {
+            return comparison;
         }
 
         public int getAbsatzAnzahl() {
