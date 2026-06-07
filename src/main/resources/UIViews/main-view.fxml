@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="mainPane"
+            fx:controller="de.lingoMetrics.UILogik.MainViewController"
+            prefHeight="400.0"
+            prefWidth="600.0"
+            stylesheets="@main-style.css"
+            styleClass="app-root">
+
+    <children>
+        <TabPane styleClass="main-tabs"
+                tabClosingPolicy="UNAVAILABLE"
+                AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0" >
+            <tabs>
+                <Tab styleClass="app-tab"
+                     text="Einfache Analyse" >
+                    <content>
+                        <VBox styleClass="tab-content"
+                              spacing="16.0" >
+
+                            <padding>
+                                <Insets bottom="18.0"
+                                        left="18.0"
+                                        right="18.0"
+                                        top="18.0" />
+                            </padding>
+
+                            <GridPane styleClass="input-row"
+                                      hgap="14.0"
+                                      VBox.vgrow="ALWAYS" >
+
+                                <columnConstraints>
+
+                                    <ColumnConstraints
+                                            hgrow="ALWAYS"
+                                            percentWidth="50.0" />
+
+                                    <ColumnConstraints
+                                            hgrow="ALWAYS"
+                                            percentWidth="50.0" />
+
+                                </columnConstraints>
+
+                                <TextArea
+                                        maxWidth="1.7976931348623157E308"
+                                        prefRowCount="12"
+                                        promptText="Füge hier deinen Text ein."
+                                        styleClass="primary-input" wrapText="true"
+                                        GridPane.columnIndex="0"
+                                        GridPane.hgrow="ALWAYS"
+                                        GridPane.vgrow="ALWAYS" />
+
+                                <StackPane styleClass="upload-dropzone"
+                                           maxWidth="1.7976931348623157E308"
+                                           GridPane.columnIndex="1"
+                                           GridPane.hgrow="ALWAYS"
+                                           GridPane.vgrow="ALWAYS">
+
+                                    <VBox styleClass="upload-dropzone-content"
+                                          alignment="CENTER"
+                                          spacing="8.0" >
+
+                                        <StackPane styleClass="upload-icon-wrapper" >
+
+                                            <SVGPath
+                                                    content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
+                                                    styleClass="upload-icon"
+                                                    onMouseClicked="#onClickSelectFileToAnalyze"/>
+
+                                        </StackPane>
+
+                                        <Label styleClass="upload-title"
+                                               text="Ziehe deine Datei hierhin und lege sie ab." />
+
+                                        <Label styleClass="upload-subtitle"
+                                               text="Klicke, um eine Datei auszuwählen." />
+                                        <Button styleClass="drop-button"
+                                                text="Wähle eine Datei."
+                                                onAction="#onClickSelectFileToAnalyze"/>
+                                    </VBox>
+                                </StackPane>
+
+                                <rowConstraints>
+                                    <RowConstraints />
+                                </rowConstraints>
+
+                            </GridPane>
+
+
+                            <HBox styleClass="action-row"
+                                  spacing="12.0" >
+                                <Button styleClass="primary-button"
+                                        text="Analysieren" />
+                                <Button styleClass="secondary-button"
+                                        text="Erstelle eine Rich-Text-Datei" />
+                            </HBox>
+
+                            <TextArea styleClass="output-area"
+                                      editable="false"
+                                      prefRowCount="5"
+                                      promptText="Hier findest du die Metriken für deinen Text."
+                                      wrapText="true"
+                                      VBox.vgrow="SOMETIMES" />
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab styleClass="app-tab"
+                     text="Vergleich mit Textstil">
+                    <content>
+                        <VBox styleClass="tab-content"
+                              spacing="16.0">
+                            <padding>
+                                <Insets
+                                        bottom="18.0"
+                                        left="18.0"
+                                        right="18.0"
+                                        top="18.0" />
+                            </padding>
+
+                            <GridPane styleClass="input-row"
+                                      hgap="14.0"
+                                      VBox.vgrow="ALWAYS">
+                                <columnConstraints>
+                                    <ColumnConstraints
+                                            hgrow="ALWAYS"
+                                            percentWidth="50.0" />
+                                    <ColumnConstraints
+                                            hgrow="ALWAYS"
+                                            percentWidth="50.0" />
+                                </columnConstraints>
+
+                                <TextArea styleClass="primary-input"
+                                          maxWidth="1.7976931348623157E308"
+                                          prefRowCount="12"
+                                          promptText="Füge hier deinen Text ein."
+                                          wrapText="true"
+                                          GridPane.columnIndex="0"
+                                          GridPane.hgrow="ALWAYS"
+                                          GridPane.vgrow="ALWAYS" />
+
+                                <StackPane styleClass="upload-dropzone"
+                                           maxWidth="1.7976931348623157E308"
+                                           GridPane.columnIndex="1"
+                                           GridPane.hgrow="ALWAYS"
+                                           GridPane.vgrow="ALWAYS">
+
+                                    <VBox styleClass="upload-dropzone-content"
+                                          alignment="CENTER"
+                                          spacing="8.0" >
+
+                                        <StackPane styleClass="upload-icon-wrapper">
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
+                                                     onMouseClicked="#onClickSelectFileToAnalyze"/>
+                                        </StackPane>
+
+                                        <Label styleClass="upload-title"
+                                               text="Ziehe deine Datei hierhin und lege sie ab." />
+
+                                        <Label styleClass="upload-subtitle"
+                                               text="Klicke, um eine Datei auszuwählen." />
+
+                                        <Button styleClass="drop-button"
+                                                text="Wähle eine Datei."
+                                                onAction="#onClickSelectFileToAnalyze"/>
+                                    </VBox>
+                                </StackPane>
+                                <rowConstraints>
+                                    <RowConstraints />
+                                </rowConstraints>
+                            </GridPane>
+
+                            <HBox styleClass="action-row compare-style-row"
+                                  spacing="14.0">
+                                <VBox styleClass="compare-style-group"
+                                      spacing="6.0" >
+                                    <Label styleClass="compare-style-label"
+                                           text="Textstil, mit dem verglichen wird:" />
+                                    <ComboBox styleClass="style-selector compare-style-selector"
+                                              prefWidth="190.0"
+                                              value="Wissenschaftliche Arbeit">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="Mail" />
+                                                <String fx:value="Artikel" />
+                                                <String fx:value="Wissenschaftliche Arbeit" />
+                                                <String fx:value="Geschichte" />
+                                            </FXCollections>
+                                        </items>
+                                    </ComboBox>
+                                </VBox>
+                                <HBox styleClass="compare-style-actions"
+                                      spacing="12.0">
+
+                                    <Button styleClass="primary-button"
+                                            text="Analysiere und vergleiche" />
+
+                                    <Button styleClass="secondary-button"
+                                            text="Erstelle eine Rich-Text-Datei" />
+                                </HBox>
+                            </HBox>
+
+                            <TextArea styleClass="output-area"
+                                      editable="false"
+                                      prefRowCount="5"
+                                      promptText="Hier findest du die Metriken für deinen Text verglichen mi denen des gewählten Textstils."
+                                      wrapText="true"
+                                      VBox.vgrow="SOMETIMES" />
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab styleClass="app-tab"
+                     text="Vergeleich von zwei Texten">
+                    <content>
+                        <VBox styleClass="tab-content"
+                              spacing="16.0" >
+                            <padding>
+                                <Insets
+                                        bottom="18.0"
+                                        left="18.0"
+                                        right="18.0"
+                                        top="18.0" />
+                            </padding>
+
+                            <HBox
+                                    spacing="14.0"
+                                    alignment="CENTER"
+                                    fillHeight="false"
+                                    VBox.vgrow="ALWAYS">
+
+                                <TextArea styleClass="primary-input"
+                                          maxHeight="1.7976931348623157E308"
+                                          maxWidth="1.7976931348623157E308"
+                                          prefRowCount="25"
+                                          promptText="Füge hier den ersten Text ein."
+                                          wrapText="true"
+                                          HBox.hgrow="ALWAYS" />
+
+                                <TextArea styleClass="primary-input"
+                                          maxHeight="1.7976931348623157E308"
+                                          maxWidth="1.7976931348623157E308"
+                                          prefRowCount="25"
+                                          promptText="Füge hier den zweiten Text ein."
+                                          wrapText="true"
+                                          HBox.hgrow="ALWAYS" />
+                            </HBox>
+
+                            <HBox
+                                    spacing="14.0"
+                                    alignment="CENTER"
+                                    fillHeight="false"
+                                    VBox.vgrow="ALWAYS">
+
+                                <StackPane styleClass="upload-dropzone compact compare-dropzone"
+                                           maxHeight="1.7976931348623157E308"
+                                           maxWidth="1.7976931348623157E308"
+                                           style="-fx-background-color: #f6f9ff; -fx-border-color: #4f7edb; -fx-border-width: 2; -fx-border-radius: 12; -fx-border-style: dashed; -fx-border-insets: 0; -fx-background-insets: 0; -fx-padding: 10;"
+                                           HBox.hgrow="ALWAYS">
+
+                                    <VBox styleClass="upload-dropzone-content"
+                                          alignment="CENTER"
+                                          spacing="4.0" >
+
+
+                                        <StackPane styleClass="upload-icon-wrapper">
+                                            <SVGPath styleClass="upload-icon"
+                                                     content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
+                                                     onMouseClicked="#onClickSelectFileToAnalyze"/>
+                                        </StackPane>
+
+                                        <Label styleClass="upload-title"
+                                               text="Ziehe die erste Textdatei hierhin und lege sie ab." />
+
+                                        <Label styleClass="upload-subtitle"
+                                               text="Klicke, um die erste Datei auszuwählen." />
+
+                                    </VBox>
+                                </StackPane>
+
+                                <StackPane styleClass="upload-dropzone compact compare-dropzone"
+                                           maxHeight="1.7976931348623157E308"
+                                           maxWidth="1.7976931348623157E308"
+                                           style="-fx-background-color: #f6f9ff; -fx-border-color: #4f7edb; -fx-border-width: 2; -fx-border-radius: 12; -fx-border-style: dashed; -fx-border-insets: 0; -fx-background-insets: 0; -fx-padding: 10;"
+                                           HBox.hgrow="ALWAYS">
+
+                                    <VBox styleClass="upload-dropzone-content"
+                                          alignment="CENTER"
+                                          spacing="4.0">
+
+                                          <StackPane styleClass="upload-icon-wrapper">
+                                              <SVGPath styleClass="upload-icon"
+                                                       content="M12 2L7 7H10V14H14V7H17L12 2ZM4 16V20H20V16H18V18H6V16H4Z"
+                                                       onMouseClicked="#onClickSelectFileToCompare"/>
+                                          </StackPane>
+
+                                        <Label styleClass="upload-title"
+                                               text="Ziehe die zweite Textdatei hierhin und lege sie ab." />
+
+                                        <Label styleClass="upload-subtitle"
+                                               text="Klicke, um die zweite Datei auszuwählen." />
+                                    </VBox>
+                                </StackPane>
+                            </HBox>
+
+                            <HBox styleClass="action-row"
+                                  spacing="12.0" >
+
+                                <Button styleClass="primary-button"
+                                        text="Analysiere und vergleiche" />
+
+                                <Button styleClass="secondary-button"
+                                        text="Erstelle eine Rich-Text-Datei" />
+
+                            </HBox>
+
+                            <TextArea styleClass="output-area"
+                                      editable="false"
+                                      prefRowCount="5"
+                                      promptText="Hier siehst du die Ergebnisse des Textvergleichs."
+                                      wrapText="true"
+                                      VBox.vgrow="SOMETIMES" />
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>
