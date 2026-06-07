@@ -7,7 +7,6 @@ import de.lingoMetrics.Enums.WortTyp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Objects;
 
 public class WordRepository {
     private List<DBword> funktionswoerter;
@@ -32,7 +31,7 @@ public class WordRepository {
 
 
     public boolean isFunktionswort(String wort){
-        if(funktionswoerter.stream().anyMatch(w -> Objects.equals(w.getWort(), wort))){
+        if(funktionswoerter.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
             return true;
         }else{
             return false;
@@ -40,7 +39,7 @@ public class WordRepository {
     }
 
     public boolean isFuellwort(String wort){
-        if(fuellwoerter.stream().anyMatch(w -> Objects.equals(w.getWort(), wort))){
+        if(fuellwoerter.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
             return true;
         }else{
             return false;
@@ -49,7 +48,7 @@ public class WordRepository {
 
     public double getSentiment(String wort){
         List<DBword> sentimentWort = sentimentindex.stream()
-                .filter(w -> w.getWort().equals(wort))
+                .filter(w -> equalsIgnoreCase(w.getWort(), wort))
                 .toList();
         if(sentimentWort.isEmpty()){
             return 0.0;
@@ -60,13 +59,17 @@ public class WordRepository {
     }
 
     public WortTyp getWortTyp(String wort){
-        if(verben.stream().anyMatch(w -> Objects.equals(w.getWort(), wort))){
+        if(verben.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
             return WortTyp.TYP_VERB;
-        }else if(adjektive.stream().anyMatch(w -> Objects.equals(w.getWort(), wort))){
+        }else if(adjektive.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
             return WortTyp.TYP_ADJEKTIV;
         }else{
             return WortTyp.TYP_OTHER;
         }
+    }
+
+    private boolean equalsIgnoreCase(String reference, String input) {
+        return reference != null && input != null && reference.equalsIgnoreCase(input);
     }
 
 }

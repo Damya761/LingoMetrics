@@ -6,6 +6,8 @@ import de.lingoMetrics.Models.Wort;
 import de.lingoMetrics.Repository.WordRepository;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 
 public class WortSchatzAnalyseService {
@@ -24,9 +26,16 @@ public class WortSchatzAnalyseService {
     }
 
     private void funktionswoerterAnalyse(Document document){
-        for(Wort wort : document.getWoerter()){
+        List<Wort> normaleWoerter = filterNormaleWoerter(document);
+        for(Wort wort : normaleWoerter){
             wort.setFunktionsWort(wordRepository.isFunktionswort(wort.getInhalt()));
         }
+
+        long funktionswoerter = normaleWoerter.stream()
+                .filter(Wort::isFunktionsWort)
+                .count();
+
+        document.setFunktionswoerterAnteil(calculateAnteil(funktionswoerter, normaleWoerter.size()));
     }
 
     private void wortTypAnalyse(Document document){
@@ -45,15 +54,30 @@ public class WortSchatzAnalyseService {
     }
 
     private void sentimentAnalyse(Document document){
-        for(Wort wort : document.getWoerter()){
+        List<Wort> normaleWoerter = filterNormaleWoerter(document);
+        for(Wort wort : normaleWoerter){
             wort.setSentiment(wordRepository.getSentiment(wort.getInhalt()));
         }
+
+        double mittleresSentiment = normaleWoerter.stream()
+                .mapToDouble(Wort::getSentiment)
+                .average()
+                .orElse(0.0);
+
+        document.setMittleresSentiment(mittleresSentiment);
     }
 
     private void fuellwoerterAnalyse(Document document){
-        for(Wort wort : document.getWoerter()){
+        List<Wort> normaleWoerter = filterNormaleWoerter(document);
+        for(Wort wort : normaleWoerter){
             wort.setFuellWort(wordRepository.isFuellwort(wort.getInhalt()));
         }
+
+        long fuellwoerter = normaleWoerter.stream()
+                .filter(Wort::isFuellWort)
+                .count();
+
+        document.setFuellwoerterAnteil(calculateAnteil(fuellwoerter, normaleWoerter.size()));
     }
 
     private void haeufigkeitsAnalyse(Document document){
@@ -67,6 +91,27 @@ public class WortSchatzAnalyseService {
                 .count();
         document.setTypeTokenRatio(haeufigkeit / document.getWoerter().size());
         document.setHapaxLegomena((int) haeufigkeit);
+    }
+
+    private List<Wort> filterNormaleWoerter(Document document) {
+        if (document == null || document.getWoerter() == null) {
+            return List.of();
+        }
+
+        return document.getWoerter().stream()
+                .filter(Objects::nonNull)
+                .filter(wort -> !wort.isSatzzeichen())
+                .filter(wort -> wort.getInhalt() != null)
+                .filter(wort -> !wort.getInhalt().trim().isEmpty())
+                .toList();
+    }
+
+    private double calculateAnteil(long treffer, int gesamt) {
+        if (gesamt == 0) {
+            return 0.0;
+        }
+
+        return (double) treffer / gesamt;
     }
 
 }
