@@ -1,10 +1,12 @@
 package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
+import de.lingoMetrics.repository.JsonReferenzRepository;
 import de.lingoMetrics.repository.WordRepository;
 import de.lingoMetrics.Service.analysis.TextStatisticsService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,18 +18,29 @@ public class ServiceManager {
 
     private final TextStrukturService textStrukturService;
     private final List<Consumer<Document>> analyseServices;
+    private final AuswertungsService auswertungsService;
 
     public ServiceManager(
             TextStrukturService textStrukturService,
             TextStatisticsService textStatisticsService,
             WortSchatzAnalyseService wortSchatzAnalyseService
     ) {
+        this(textStrukturService, textStatisticsService, wortSchatzAnalyseService, null);
+    }
+
+    public ServiceManager(
+            TextStrukturService textStrukturService,
+            TextStatisticsService textStatisticsService,
+            WortSchatzAnalyseService wortSchatzAnalyseService,
+            AuswertungsService auswertungsService
+    ) {
         this(
                 textStrukturService,
                 List.of(
                         wortSchatzAnalyseService::Analyze,
                         textStatisticsService::analyze
-                )
+                ),
+                auswertungsService
         );
     }
 
@@ -35,8 +48,17 @@ public class ServiceManager {
             TextStrukturService textStrukturService,
             List<Consumer<Document>> analyseServices
     ) {
+        this(textStrukturService, analyseServices, null);
+    }
+
+    public ServiceManager(
+            TextStrukturService textStrukturService,
+            List<Consumer<Document>> analyseServices,
+            AuswertungsService auswertungsService
+    ) {
         this.textStrukturService = Objects.requireNonNull(textStrukturService, "textStrukturService must not be null.");
         this.analyseServices = List.copyOf(Objects.requireNonNull(analyseServices, "analyseServices must not be null."));
+        this.auswertungsService = auswertungsService;
     }
 
     public static ServiceManager createDefault() throws IOException {
@@ -46,7 +68,8 @@ public class ServiceManager {
         return new ServiceManager(
                 new TextStrukturService(),
                 new TextStatisticsService(),
-                new WortSchatzAnalyseService(wordRepository)
+                new WortSchatzAnalyseService(wordRepository),
+                new AuswertungsService(new JsonReferenzRepository())
         );
     }
 
@@ -59,7 +82,22 @@ public class ServiceManager {
             analyseService.accept(document);
         }
 
-        return AnalysisResult.from(document, request);
+        Integer score = null;
+        String gesamtBewertung = null;
+        List<String> hinweise = List.of();
+
+        if (request.isComparison()) {
+            if (auswertungsService == null) {
+                throw new IllegalStateException("AuswertungsService must be configured for comparison requests.");
+            }
+
+            List<String> auswertungsHinweise = new ArrayList<>();
+            score = auswertungsService.calculateScore(document, auswertungsHinweise);
+            gesamtBewertung = auswertungsService.determineRating(score);
+            hinweise = auswertungsHinweise;
+        }
+
+        return AnalysisResult.from(document, request, score, gesamtBewertung, hinweise);
     }
 
     public AnalysisResult analyze(AnalysisRequest request) {
@@ -157,6 +195,9 @@ public class ServiceManager {
         private final int hapaxLegomena;
         private final double adjektivVerbQuotient;
         private final double mittlereKonkretheit;
+        private final Integer score;
+        private final String gesamtBewertung;
+        private final List<String> hinweise;
 
         private AnalysisResult(
                 String stiltype,
@@ -176,7 +217,10 @@ public class ServiceManager {
                 double mittleresSentiment,
                 int hapaxLegomena,
                 double adjektivVerbQuotient,
-                double mittlereKonkretheit
+                double mittlereKonkretheit,
+                Integer score,
+                String gesamtBewertung,
+                List<String> hinweise
         ) {
             this.stiltype = stiltype;
             this.export = isExport;
@@ -196,9 +240,18 @@ public class ServiceManager {
             this.hapaxLegomena = hapaxLegomena;
             this.adjektivVerbQuotient = adjektivVerbQuotient;
             this.mittlereKonkretheit = mittlereKonkretheit;
+            this.score = score;
+            this.gesamtBewertung = gesamtBewertung;
+            this.hinweise = hinweise == null ? List.of() : List.copyOf(hinweise);
         }
 
-        private static AnalysisResult from(Document document, AnalysisRequest request) {
+        private static AnalysisResult from(
+                Document document,
+                AnalysisRequest request,
+                Integer score,
+                String gesamtBewertung,
+                List<String> hinweise
+        ) {
             Map<String, Long> interpunktion = document.getInterpunktion() == null
                     ? Map.of()
                     : document.getInterpunktion();
@@ -221,7 +274,10 @@ public class ServiceManager {
                     document.getMittleresSentiment(),
                     document.getHapaxLegomena(),
                     document.getAdjektivVerbQuotient(),
-                    document.getMittlereKonkretheit()
+                    document.getMittlereKonkretheit(),
+                    score,
+                    gesamtBewertung,
+                    hinweise
             );
         }
 
@@ -315,6 +371,22 @@ public class ServiceManager {
 
         public double getMittlereKonkretheit() {
             return mittlereKonkretheit;
+        }
+
+        public boolean hasAuswertung() {
+            return score != null;
+        }
+
+        public Integer getScore() {
+            return score;
+        }
+
+        public String getGesamtBewertung() {
+            return gesamtBewertung;
+        }
+
+        public List<String> getHinweise() {
+            return hinweise;
         }
     }
 }
