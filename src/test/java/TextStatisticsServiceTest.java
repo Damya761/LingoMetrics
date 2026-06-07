@@ -1,7 +1,7 @@
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Satz;
 import de.lingoMetrics.Models.Wort;
-import de.lingoMetrics.service.analysis.TextStatisticsService;
+import de.lingoMetrics.Service.analysis.TextStatisticsService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

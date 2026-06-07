@@ -1,4 +1,4 @@
-package de.lingoMetrics.service.analysis;
+package de.lingoMetrics.Service.analysis;
 
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Satz;
