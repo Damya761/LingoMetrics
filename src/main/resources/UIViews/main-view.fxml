@@ -12,6 +12,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.lingoMetrics.UILogik.MainViewController"
+            fx:id="mainPane"
             prefHeight="400.0"
             prefWidth="600.0"
             stylesheets="@main-style.css"
@@ -54,7 +55,7 @@
 
                                 </columnConstraints>
 
-                                <TextArea
+                                <TextArea fx:id="textArea"
                                         maxWidth="1.7976931348623157E308"
                                         prefRowCount="12"
                                         promptText="Füge hier deinen Text ein."
@@ -64,6 +65,7 @@
                                         GridPane.vgrow="ALWAYS" />
 
                                 <StackPane styleClass="upload-dropzone"
+                                           onMouseClicked="#openFileChooser"
                                            maxWidth="1.7976931348623157E308"
                                            GridPane.columnIndex="1"
                                            GridPane.hgrow="ALWAYS"
@@ -87,7 +89,8 @@
                                         <Label styleClass="upload-subtitle"
                                                text="Klicke, um eine Datei auszuwählen." />
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei." />
+                                                text="Wähle eine Datei."
+                                                onAction="#openFileChooser" />
                                     </VBox>
                                 </StackPane>
 
@@ -101,12 +104,13 @@
                             <HBox styleClass="action-row"
                                   spacing="12.0" >
                                 <Button styleClass="primary-button"
-                                        text="Analysieren" />
+                                        text="Analysieren"
+                                        onAction="#onClickAnalyzeSimple" />
                                 <Button styleClass="secondary-button"
                                         text="Erstelle eine Rich-Text-Datei" />
                             </HBox>
 
-                            <TextArea styleClass="output-area"
+                            <TextArea fx:id="outputArea" styleClass="output-area"
                                       editable="false"
                                       prefRowCount="5"
                                       promptText="Hier findest du die Metriken für deinen Text."
@@ -141,7 +145,7 @@
                                             percentWidth="50.0" />
                                 </columnConstraints>
 
-                                <TextArea styleClass="primary-input"
+                                <TextArea fx:id="textAreaCompare" styleClass="primary-input"
                                           maxWidth="1.7976931348623157E308"
                                           prefRowCount="12"
                                           promptText="Füge hier deinen Text ein."
@@ -151,6 +155,7 @@
                                           GridPane.vgrow="ALWAYS" />
 
                                 <StackPane styleClass="upload-dropzone"
+                                           onMouseClicked="#openFileChooser"
                                            maxWidth="1.7976931348623157E308"
                                            GridPane.columnIndex="1"
                                            GridPane.hgrow="ALWAYS"
@@ -172,7 +177,8 @@
                                                text="Klicke, um eine Datei auszuwählen." />
 
                                         <Button styleClass="drop-button"
-                                                text="Wähle eine Datei." />
+                                                text="Wähle eine Datei."
+                                                onAction="#openFileChooser" />
                                     </VBox>
                                 </StackPane>
                                 <rowConstraints>
@@ -186,7 +192,7 @@
                                       spacing="6.0" >
                                     <Label styleClass="compare-style-label"
                                            text="Textstil, mit dem verglichen wird:" />
-                                    <ComboBox styleClass="style-selector compare-style-selector"
+                                    <ComboBox fx:id="styleComboBox" styleClass="style-selector compare-style-selector"
                                               prefWidth="190.0"
                                               value="Wissenschaftliche Arbeit">
                                         <items>
@@ -203,14 +209,15 @@
                                       spacing="12.0">
 
                                     <Button styleClass="primary-button"
-                                            text="Analysiere und vergleiche" />
+                                            text="Analysiere und vergleiche"
+                                            onAction="#onClickAnalyzeCompare" />
 
                                     <Button styleClass="secondary-button"
                                             text="Erstelle eine Rich-Text-Datei" />
                                 </HBox>
                             </HBox>
 
-                            <TextArea styleClass="output-area"
+                            <TextArea fx:id="outputAreaCompare" styleClass="output-area"
                                       editable="false"
                                       prefRowCount="5"
                                       promptText="Hier findest du die Metriken für deinen Text verglichen mi denen des gewählten Textstils."
