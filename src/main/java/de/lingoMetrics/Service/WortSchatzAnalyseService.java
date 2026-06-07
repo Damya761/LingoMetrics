@@ -37,11 +37,11 @@ public class WortSchatzAnalyseService {
             if(wort.getWortart().equals(WortTyp.TYP_ADJEKTIV)){
                 adjektive++;
             }
-            if(wort.getWortart().equals(WortTyp.TYP_ADJEKTIV)){
+            if(wort.getWortart().equals(WortTyp.TYP_VERB)){
                 verben++;
             }
         }
-        document.setAdjektivVerbQuotient(adjektive/verben);
+        document.setAdjektivVerbQuotient(verben == 0 ? 0.0 : (double) adjektive / verben);
     }
 
     private void sentimentAnalyse(Document document){
