@@ -1,4 +1,4 @@
-package de.lingoMetrics.repository;
+package de.lingoMetrics.Repository;
 
 public interface ReferenzRepository {
     double getIdealeSatzlaenge();
