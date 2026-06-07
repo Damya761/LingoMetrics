@@ -65,7 +65,7 @@
                                         GridPane.vgrow="ALWAYS" />
 
                                 <StackPane fx:id="dropzoneSimple" styleClass="upload-dropzone"
-                                           onMouseClicked="#openFileChooserTab1"
+                                           onMouseClicked="#openFileChooserTab"
                                            onDragOver="#handleDragOverTab1"
                                            onDragEntered="#handleDragEnteredTab1"
                                            onDragExited="#handleDragExitedTab1"
@@ -94,7 +94,7 @@
                                                text="Klicke, um eine Datei auszuwählen." />
                                         <HBox spacing="8.0">
                                             <Label fx:id="fileLabelSimple" text="Keine Datei gewählt" />
-                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab1" />
+                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab" />
                                             <Button styleClass="secondary-button" text="Entfernen" onAction="#removeSelectedFileSimple" />
                                         </HBox>
                                     </VBox>
@@ -161,7 +161,7 @@
                                           GridPane.vgrow="ALWAYS" />
 
                                 <StackPane fx:id="dropzoneCompare" styleClass="upload-dropzone"
-                                           onMouseClicked="#openFileChooserTab2"
+                                           onMouseClicked="#openFileChooserTab"
                                            onDragOver="#handleDragOverTab2"
                                            onDragEntered="#handleDragEnteredTab2"
                                            onDragExited="#handleDragExitedTab2"
@@ -188,7 +188,7 @@
 
                                         <HBox spacing="8.0">
                                             <Label fx:id="fileLabelCompare" text="Keine Datei gewählt" />
-                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab2" />
+                                            <Button styleClass="drop-button" text="Wähle Datei" onAction="#openFileChooserTab" />
                                             <Button styleClass="secondary-button" text="Entfernen" onAction="#removeSelectedFileCompare" />
                                         </HBox>
                                     </VBox>

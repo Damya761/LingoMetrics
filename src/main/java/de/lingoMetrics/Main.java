@@ -17,6 +17,7 @@ public class Main extends Application {
 
             stage.setTitle("LingoMetrics");
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             System.err.println("Fehler beim Laden der FXML-Datei: " + e.getMessage());

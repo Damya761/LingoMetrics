@@ -1,8 +1,8 @@
 package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
-import de.lingoMetrics.repository.JsonReferenzRepository;
-import de.lingoMetrics.repository.WordRepository;
+import de.lingoMetrics.Repository.JsonReferenzRepository;
+import de.lingoMetrics.Repository.WordRepository;
 import de.lingoMetrics.Service.analysis.TextStatisticsService;
 
 import java.io.IOException;
@@ -22,37 +22,6 @@ public class ServiceManager {
 
     public ServiceManager(
             TextStrukturService textStrukturService,
-            TextStatisticsService textStatisticsService,
-            WortSchatzAnalyseService wortSchatzAnalyseService
-    ) {
-        this(textStrukturService, textStatisticsService, wortSchatzAnalyseService, null);
-    }
-
-    public ServiceManager(
-            TextStrukturService textStrukturService,
-            TextStatisticsService textStatisticsService,
-            WortSchatzAnalyseService wortSchatzAnalyseService,
-            AuswertungsService auswertungsService
-    ) {
-        this(
-                textStrukturService,
-                List.of(
-                        wortSchatzAnalyseService::Analyze,
-                        textStatisticsService::analyze
-                ),
-                auswertungsService
-        );
-    }
-
-    public ServiceManager(
-            TextStrukturService textStrukturService,
-            List<Consumer<Document>> analyseServices
-    ) {
-        this(textStrukturService, analyseServices, null);
-    }
-
-    public ServiceManager(
-            TextStrukturService textStrukturService,
             List<Consumer<Document>> analyseServices,
             AuswertungsService auswertungsService
     ) {
@@ -64,11 +33,15 @@ public class ServiceManager {
     public static ServiceManager createDefault() throws IOException {
         WordRepository wordRepository = new WordRepository();
         wordRepository.load();
+        WortSchatzAnalyseService wortSchatzAnalyseService = new WortSchatzAnalyseService(wordRepository);
+        TextStatisticsService textStatisticsService = new TextStatisticsService();
 
         return new ServiceManager(
                 new TextStrukturService(),
-                new TextStatisticsService(),
-                new WortSchatzAnalyseService(wordRepository),
+                List.of(
+                        wortSchatzAnalyseService::Analyze,
+                        textStatisticsService::analyze
+                ),
                 new AuswertungsService(new JsonReferenzRepository())
         );
     }
@@ -100,10 +73,6 @@ public class ServiceManager {
         return AnalysisResult.from(document, request, score, gesamtBewertung, hinweise);
     }
 
-    public AnalysisResult analyze(AnalysisRequest request) {
-        return analyse(request);
-    }
-
     private void validateRequest(AnalysisRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("AnalysisRequest must not be null.");
@@ -113,58 +82,30 @@ public class ServiceManager {
             throw new IllegalArgumentException("AnalysisRequest text must not be null or empty.");
         }
 
-        if (request.isComparison() && (request.getStiltype() == null || request.getStiltype().trim().isEmpty())) {
+        if (request.isComparison() && (request.getStiltyp() == null || request.getStiltyp().trim().isEmpty())) {
             throw new IllegalArgumentException("AnalysisRequest style type must not be null or empty for comparisons.");
         }
     }
 
     public static final class AnalysisRequest {
         private final String rawtext;
-        private final String stiltype;
+        private final String stiltyp;
         private final boolean export;
         private final boolean comparison;
 
-        public AnalysisRequest(String rawtext, String stiltype, boolean isExport, boolean isComparison) {
+        public AnalysisRequest(String rawtext, String stiltyp, boolean isExport, boolean isComparison) {
             this.rawtext = rawtext;
-            this.stiltype = stiltype;
+            this.stiltyp = stiltyp;
             this.export = isExport;
             this.comparison = isComparison;
-        }
-
-        public AnalysisRequest(String rohtext, String stiltyp) {
-            this(rohtext, stiltyp, false, false);
-        }
-
-        public static AnalysisRequest of(String rawtext, String stiltype, boolean isExport, boolean isComparison) {
-            return new AnalysisRequest(rawtext, stiltype, isExport, isComparison);
-        }
-
-        public static AnalysisRequest of(String rohtext, String stiltyp) {
-            return new AnalysisRequest(rohtext, stiltyp);
         }
 
         public String getRawtext() {
             return rawtext;
         }
 
-        public String getRawText() {
-            return rawtext;
-        }
-
-        public String getRohtext() {
-            return rawtext;
-        }
-
-        public String getStiltype() {
-            return stiltype;
-        }
-
-        public String getStilType() {
-            return stiltype;
-        }
-
         public String getStiltyp() {
-            return stiltype;
+            return stiltyp;
         }
 
         public boolean isExport() {
@@ -177,7 +118,7 @@ public class ServiceManager {
     }
 
     public static final class AnalysisResult {
-        private final String stiltype;
+        private final String stiltyp;
         private final boolean export;
         private final boolean comparison;
         private final int absatzAnzahl;
@@ -200,7 +141,7 @@ public class ServiceManager {
         private final List<String> hinweise;
 
         private AnalysisResult(
-                String stiltype,
+                String stiltyp,
                 boolean isExport,
                 boolean isComparison,
                 int absatzAnzahl,
@@ -222,7 +163,7 @@ public class ServiceManager {
                 String gesamtBewertung,
                 List<String> hinweise
         ) {
-            this.stiltype = stiltype;
+            this.stiltyp = stiltyp;
             this.export = isExport;
             this.comparison = isComparison;
             this.absatzAnzahl = absatzAnzahl;
@@ -257,7 +198,7 @@ public class ServiceManager {
                     : document.getInterpunktion();
 
             return new AnalysisResult(
-                    request.getStiltype(),
+                    request.getStiltyp(),
                     request.isExport(),
                     request.isComparison(),
                     document.getAbsaetze() == null ? 0 : document.getAbsaetze().size(),
@@ -293,16 +234,8 @@ public class ServiceManager {
                     .count();
         }
 
-        public String getStiltype() {
-            return stiltype;
-        }
-
-        public String getStilType() {
-            return stiltype;
-        }
-
         public String getStiltyp() {
-            return stiltype;
+            return stiltyp;
         }
 
         public boolean isExport() {

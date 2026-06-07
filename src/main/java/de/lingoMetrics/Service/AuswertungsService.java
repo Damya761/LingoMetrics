@@ -1,7 +1,7 @@
 package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
-import de.lingoMetrics.repository.ReferenzRepository;
+import de.lingoMetrics.Repository.ReferenzRepository;
 
 import java.util.HashMap;
 import java.util.List;
