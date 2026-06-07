@@ -15,7 +15,7 @@ public class MainViewController {
 
     @FXML
     private AnchorPane mainPane;
-    public Object textToAnalyze;
+    public String textToAnalyze;
     /*public Object textToCompare;*/
 
     @FXML
