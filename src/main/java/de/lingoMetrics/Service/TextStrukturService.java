@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class TextStrukturService {
 
     //Das Pattern ist bewusst einfach gehalten und deckt die für unsere erste Analyseversion relevanten Grundfälle ab. Sonderfälle wie Abkürzungen, Gedankenstriche oder komplexe technische Schreibweisen können später erweitert werden, ohne die restliche Service-Struktur zu ändern.
-    private static final Pattern TOKEN_PATTERN = Pattern.compile(
+    public static final Pattern TOKEN_PATTERN = Pattern.compile(
             "[\\p{L}\\p{M}]+(?:[-'][\\p{L}\\p{M}]+)*|\\d+(?:[,.]\\d+)*|[.!?,;:()\"„“»«…-]"
     );
 

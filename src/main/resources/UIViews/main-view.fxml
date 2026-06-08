@@ -113,7 +113,8 @@
                                         text="Analysieren"
                                         onAction="#onClickAnalyzeSimple" />
                                 <Button styleClass="secondary-button"
-                                        text="Erstelle eine Rich-Text-Datei" />
+                                        text="Erstelle eine Rich-Text-Datei"
+                                        onAction="#onClickExportSimple" />
                             </HBox>
 
                             <TextArea fx:id="outputArea" styleClass="output-area"
@@ -225,7 +226,8 @@
                                             onAction="#onClickAnalyzeCompare" />
 
                                     <Button styleClass="secondary-button"
-                                            text="Erstelle eine Rich-Text-Datei" />
+                                            text="Erstelle eine Rich-Text-Datei"
+                                            onAction="#onClickExportCompare" />
                                 </HBox>
                             </HBox>
 
