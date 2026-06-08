@@ -118,6 +118,7 @@ public class ServiceManager {
     }
 
     public static final class AnalysisResult {
+        private final Document document;
         private final String stiltyp;
         private final boolean export;
         private final boolean comparison;
@@ -141,6 +142,7 @@ public class ServiceManager {
         private final List<String> hinweise;
 
         private AnalysisResult(
+                Document document,
                 String stiltyp,
                 boolean isExport,
                 boolean isComparison,
@@ -163,6 +165,7 @@ public class ServiceManager {
                 String gesamtBewertung,
                 List<String> hinweise
         ) {
+            this.document = document;
             this.stiltyp = stiltyp;
             this.export = isExport;
             this.comparison = isComparison;
@@ -198,6 +201,7 @@ public class ServiceManager {
                     : document.getInterpunktion();
 
             return new AnalysisResult(
+                    document,
                     request.getStiltyp(),
                     request.isExport(),
                     request.isComparison(),
@@ -232,6 +236,10 @@ public class ServiceManager {
                     .filter(Objects::nonNull)
                     .filter(wort -> !wort.isSatzzeichen())
                     .count();
+        }
+
+        public Document getDocument() {
+            return document;
         }
 
         public String getStiltyp() {

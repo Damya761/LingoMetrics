@@ -14,6 +14,9 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import de.lingoMetrics.Service.ServiceManager;
+import de.lingoMetrics.Service.ExportService;
+import javafx.scene.control.Alert;
+
 
 
 public class MainViewController {
@@ -327,4 +330,105 @@ public class MainViewController {
             return null;
         }
     }
+
+    @FXML
+    private void onClickExportSimple() {
+        String text = null;
+        if (selectedFileSimple != null) {
+            text = readFile(selectedFileSimple);
+        } else if (textArea != null) {
+            text = textArea.getText();
+        }
+
+        if (text == null || text.isBlank()) {
+            showErrorAlert("Export Fehler", "Kein Text zum Exportieren gefunden.");
+            return;
+        }
+
+        try {
+            ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, null, true, false);
+            ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Rich-Text-Datei speichern");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Rich Text Format", "*.rtf")
+            );
+            fileChooser.setInitialFileName("lingometrics_analyse.rtf");
+            File documents = new File(System.getProperty("user.home"), "Documents");
+            if (documents.exists()) {
+                fileChooser.setInitialDirectory(documents);
+            }
+
+            Stage stage = (Stage) mainPane.getScene().getWindow();
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                ExportService.exportToRtf(result.getDocument(), result, text, file);
+                showInfoAlert("Export erfolgreich", "Die Analyse wurde erfolgreich als RTF-Datei exportiert.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onClickExportCompare() {
+        String text = null;
+        if (selectedFileCompare != null) {
+            text = readFile(selectedFileCompare);
+        } else if (textAreaCompare != null) {
+            text = textAreaCompare.getText();
+        }
+
+        String style = styleComboBox != null ? styleComboBox.getValue() : null;
+
+        if (text == null || text.isBlank()) {
+            showErrorAlert("Export Fehler", "Kein Text zum Exportieren gefunden.");
+            return;
+        }
+
+        try {
+            ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, style, true, true);
+            ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Rich-Text-Datei speichern");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Rich Text Format", "*.rtf")
+            );
+            fileChooser.setInitialFileName("lingometrics_vergleich.rtf");
+            File documents = new File(System.getProperty("user.home"), "Documents");
+            if (documents.exists()) {
+                fileChooser.setInitialDirectory(documents);
+            }
+
+            Stage stage = (Stage) mainPane.getScene().getWindow();
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                ExportService.exportToRtf(result.getDocument(), result, text, file);
+                showInfoAlert("Export erfolgreich", "Der Vergleich wurde erfolgreich als RTF-Datei exportiert.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+        }
+    }
+
+    private void showInfoAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
+
