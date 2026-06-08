@@ -65,7 +65,7 @@ public class ServiceManager {
             }
 
             List<String> auswertungsHinweise = new ArrayList<>();
-            score = auswertungsService.calculateScore(document, auswertungsHinweise);
+            score = auswertungsService.calculateScore(document, request.getStiltyp(), auswertungsHinweise);
             gesamtBewertung = auswertungsService.determineRating(score);
             hinweise = auswertungsHinweise;
         }

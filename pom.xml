@@ -84,7 +84,6 @@
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useUnlimitedThreads>true</useUnlimitedThreads>
-                    <argLine>--add-modules javafx.controls,javafx.fxml</argLine>
                 </configuration>
             </plugin>
 
@@ -152,7 +151,6 @@
                         <configuration>
                             <useSystemClassLoader>false</useSystemClassLoader>
                             <useUnlimitedThreads>true</useUnlimitedThreads>
-                            <argLine>--add-modules javafx.controls,javafx.fxml</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
