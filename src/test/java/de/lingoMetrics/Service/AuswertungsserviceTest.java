@@ -1,6 +1,7 @@
 package de.lingoMetrics.Service;
 
 import de.lingoMetrics.Models.Document;
+import de.lingoMetrics.Repository.JsonReferenzRepository;
 import de.lingoMetrics.Repository.ReferenzRepository;
 import org.junit.jupiter.api.Test;
 
@@ -123,25 +124,49 @@ class AuswertungsServiceTest {
         assertTrue(result.getHinweise().isEmpty());
     }
 
+    @Test
+    void calculateScore_bewertetUnterschiedlichJeNachStiltyp() {
+        JsonReferenzRepository repository = new JsonReferenzRepository();
+        AuswertungsService service = new AuswertungsService(repository);
+
+        Document document = new Document();
+        document.setMittlereSatzlaenge(22.0);
+        document.setFuellwoerterAnteil(0.05);
+        document.setTypeTokenRatio(0.60);
+
+        List<String> hinweiseWissenschaft = new ArrayList<>();
+        int scoreWissenschaft = service.calculateScore(document, "Wissenschaftliche Arbeit", hinweiseWissenschaft);
+
+        List<String> hinweiseMail = new ArrayList<>();
+        int scoreMail = service.calculateScore(document, "Mail", hinweiseMail);
+
+        assertEquals(100, scoreWissenschaft);
+        assertTrue(hinweiseWissenschaft.isEmpty());
+
+        assertTrue(scoreMail < 100);
+        assertFalse(hinweiseMail.isEmpty());
+        assertTrue(hinweiseMail.stream().anyMatch(h -> h.contains("Satzlänge")));
+    }
+
     private static class FakeReferenzRepository implements ReferenzRepository {
 
         @Override
-        public double getIdealeSatzlaenge() {
+        public double getIdealeSatzlaenge(String stiltyp) {
             return 18.0;
         }
 
         @Override
-        public double getMaxFuellwortAnteil() {
+        public double getMaxFuellwortAnteil(String stiltyp) {
             return 0.08;
         }
 
         @Override
-        public double getMinTypeTokenRatio() {
+        public double getMinTypeTokenRatio(String stiltyp) {
             return 0.45;
         }
 
         @Override
-        public double getTolerance() {
+        public double getTolerance(String stiltyp) {
             return 5.0;
         }
     }

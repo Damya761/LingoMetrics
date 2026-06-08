@@ -17,12 +17,16 @@ public class AuswertungsService {
     }
 
     public int calculateScore(Document doc, List<String> hinweise) {
+        return calculateScore(doc, null, hinweise);
+    }
+
+    public int calculateScore(Document doc, String stiltyp, List<String> hinweise) {
         Objects.requireNonNull(doc, "Document must not be null.");
         Objects.requireNonNull(hinweise, "Hinweise list must not be null.");
 
         Map<String, Double> metriken = aggregateMetrics(doc);
 
-        return calculateScore(metriken, hinweise);
+        return calculateScore(metriken, stiltyp, hinweise);
     }
 
     private Map<String, Double> aggregateMetrics(Document doc) {
@@ -43,12 +47,12 @@ public class AuswertungsService {
         return metriken;
     }
 
-    private int calculateScore(Map<String, Double> metriken, List<String> hinweise) {
+    private int calculateScore(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
         int score = 100;
 
-        score -= evaluateSentenceLength(metriken, hinweise);
-        score -= evaluateFillerWords(metriken, hinweise);
-        score -= evaluateVocabulary(metriken, hinweise);
+        score -= evaluateSentenceLength(metriken, stiltyp, hinweise);
+        score -= evaluateFillerWords(metriken, stiltyp, hinweise);
+        score -= evaluateVocabulary(metriken, stiltyp, hinweise);
         score -= evaluateReadability(metriken, hinweise);
         score -= evaluateSentenceVariation(metriken, hinweise);
         score -= evaluateFunctionWords(metriken, hinweise);
@@ -60,10 +64,10 @@ public class AuswertungsService {
         return Math.max(score, 0);
     }
 
-    private int evaluateSentenceLength(Map<String, Double> metriken, List<String> hinweise) {
+    private int evaluateSentenceLength(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
         double mittlereSatzlaenge = metriken.get("Mittlere Satzlänge");
-        double idealeSatzlaenge = referenzRepository.getIdealeSatzlaenge();
-        double tolerance = referenzRepository.getTolerance();
+        double idealeSatzlaenge = referenzRepository.getIdealeSatzlaenge(stiltyp);
+        double tolerance = referenzRepository.getTolerance(stiltyp);
 
         if (Math.abs(mittlereSatzlaenge - idealeSatzlaenge) > tolerance) {
             hinweise.add("Die durchschnittliche Satzlänge weicht deutlich vom Referenzwert ab.");
@@ -73,8 +77,8 @@ public class AuswertungsService {
         return 0;
     }
 
-    private int evaluateFillerWords(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Füllwortanteil") > referenzRepository.getMaxFuellwortAnteil()) {
+    private int evaluateFillerWords(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
+        if (metriken.get("Füllwortanteil") > referenzRepository.getMaxFuellwortAnteil(stiltyp)) {
             hinweise.add("Der Text enthält vergleichsweise viele Füllwörter.");
             return 15;
         }
@@ -82,8 +86,8 @@ public class AuswertungsService {
         return 0;
     }
 
-    private int evaluateVocabulary(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Type-Token-Ratio") < referenzRepository.getMinTypeTokenRatio()) {
+    private int evaluateVocabulary(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
+        if (metriken.get("Type-Token-Ratio") < referenzRepository.getMinTypeTokenRatio(stiltyp)) {
             hinweise.add("Die Wortvielfalt ist eher niedrig.");
             return 10;
         }
