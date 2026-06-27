@@ -9,9 +9,18 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+
+    private static ApplicationContext context;
+
+    public static ApplicationContext getContext() {
+        return context;
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         try {
+            context = new ApplicationContext();
+
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/UIViews/main-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 

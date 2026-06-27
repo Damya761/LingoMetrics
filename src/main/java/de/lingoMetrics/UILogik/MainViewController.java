@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Locale;
+
+import de.lingoMetrics.Main;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -25,11 +27,7 @@ public class MainViewController {
     private ServiceManager serviceManager;
     @FXML
     private void initialize() {
-        try {
-            serviceManager = ServiceManager.createDefault();
-        } catch (IOException e) {
-            throw new RuntimeException("ServiceManager konnte nicht initialisiert werden.", e);
-        }
+        this.serviceManager = Main.getContext().getServiceManager();
     }
 
 

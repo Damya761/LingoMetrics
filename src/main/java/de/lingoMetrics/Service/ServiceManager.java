@@ -30,22 +30,6 @@ public class ServiceManager {
         this.auswertungsService = auswertungsService;
     }
 
-    public static ServiceManager createDefault() throws IOException {
-        WordRepository wordRepository = new WordRepository();
-        wordRepository.load();
-        WortSchatzAnalyseService wortSchatzAnalyseService = new WortSchatzAnalyseService(wordRepository);
-        TextStatisticsService textStatisticsService = new TextStatisticsService();
-
-        return new ServiceManager(
-                new TextStrukturService(),
-                List.of(
-                        wortSchatzAnalyseService::Analyze,
-                        textStatisticsService::analyze
-                ),
-                new AuswertungsService(new JsonReferenzRepository())
-        );
-    }
-
     public AnalysisResult analyse(AnalysisRequest request) {
         validateRequest(request);
 

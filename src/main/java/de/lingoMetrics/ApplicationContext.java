@@ -1,0 +1,31 @@
+package de.lingoMetrics;
+
+import de.lingoMetrics.Repository.JsonReferenzRepository;
+import de.lingoMetrics.Repository.WordRepository;
+import de.lingoMetrics.Service.*;
+import de.lingoMetrics.Service.analysis.TextStatisticsService;
+import java.io.IOException;
+import java.util.List;
+
+public class ApplicationContext {
+
+    private final ServiceManager serviceManager;
+
+    public ApplicationContext() throws IOException {
+        WordRepository wordRepository = new WordRepository();
+        wordRepository.load();
+
+        this.serviceManager = new ServiceManager(
+                new TextStrukturService(),
+                List.of(
+                        new WortSchatzAnalyseService(wordRepository)::Analyze,
+                        new TextStatisticsService()::analyze
+                ),
+                new AuswertungsService(new JsonReferenzRepository())
+        );
+    }
+
+    public ServiceManager getServiceManager() {
+        return serviceManager;
+    }
+}
