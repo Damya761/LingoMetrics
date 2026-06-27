@@ -11,7 +11,7 @@ import java.util.Objects;
 
 
 public class WortSchatzAnalyseService {
-    public final WordRepository wordRepository;
+    private final WordRepository wordRepository;
 
     public WortSchatzAnalyseService(WordRepository wordRepository){
         this.wordRepository = wordRepository;
@@ -81,16 +81,14 @@ public class WortSchatzAnalyseService {
         document.setFuellwoerterAnteil(calculateAnteil(fuellwoerter, normaleWoerter.size()));
     }
 
-    private void haeufigkeitsAnalyse(Document document){
+    private void haeufigkeitsAnalyse(Document document) {
+        List<Wort> normaleWoerter = filterNormaleWoerter(document); // statt getWoerter()
         HashMap<String, Integer> woerter = new HashMap<>();
-        for(Wort wort : document.getWoerter()){
+        for (Wort wort : normaleWoerter) {
             woerter.compute(wort.getInhalt(), (k, anzahl) -> anzahl == null ? 1 : anzahl + 1);
         }
-        double haeufigkeit = woerter.values()
-                .stream()
-                .filter(v -> v == 1)
-                .count();
-        document.setTypeTokenRatio(haeufigkeit / document.getWoerter().size());
+        double haeufigkeit = woerter.values().stream().filter(v -> v == 1).count();
+        document.setTypeTokenRatio(haeufigkeit / normaleWoerter.size());
         document.setHapaxLegomena((int) haeufigkeit);
     }
 
