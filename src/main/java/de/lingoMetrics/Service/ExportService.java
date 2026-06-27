@@ -1,5 +1,6 @@
 package de.lingoMetrics.Service;
 
+import de.lingoMetrics.Models.AnalysisResult;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Wort;
 import de.lingoMetrics.Enums.WortTyp;
@@ -19,7 +20,7 @@ public class ExportService {
         return "\\" + "u" + charCode + "?";
     }
 
-    public static void exportToRtf(Document doc, ServiceManager.AnalysisResult result, String rawText, File targetFile) throws IOException {
+    public static void exportToRtf(Document doc, AnalysisResult result, String rawText, File targetFile) throws IOException {
         StringBuilder rtf = new StringBuilder();
 
         // RTF Header
@@ -41,34 +42,34 @@ public class ExportService {
         // Metadata
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         rtf.append("Datum: \\b ").append(LocalDateTime.now().format(formatter)).append("\\b0\\par\n");
-        if (result.isComparison()) {
-            rtf.append("Verglichen mit Textstil: \\b ").append(escapeRtf(result.getStiltyp())).append("\\b0\\par\n");
-            rtf.append("Score: \\b ").append(result.getScore()).append(" / 100\\b0\\par\n");
-            rtf.append("Gesamtbewertung: \\b ").append(escapeRtf(result.getGesamtBewertung())).append("\\b0\\par\n");
+        if (result.comparison()) {
+            rtf.append("Verglichen mit Textstil: \\b ").append(escapeRtf(result.stiltyp())).append("\\b0\\par\n");
+            rtf.append("Score: \\b ").append(result.score()).append(" / 100\\b0\\par\n");
+            rtf.append("Gesamtbewertung: \\b ").append(escapeRtf(result.gesamtBewertung())).append("\\b0\\par\n");
         }
         rtf.append("\\par\n");
 
         // Metrics Table
         rtf.append("\\fs24\\b Analyse-Ergebnisse:\\b0\\fs22\\par\n");
-        rtf.append("- Abs" + rtfUnicode(228) + "tze: \\b ").append(result.getAbsatzAnzahl()).append("\\b0\\par\n");
-        rtf.append("- S" + rtfUnicode(228) + "tze: \\b ").append(result.getSatzAnzahl()).append("\\b0\\par\n");
-        rtf.append("- W" + rtfUnicode(246) + "rter: \\b ").append(result.getWortAnzahl()).append("\\b0\\par\n");
-        rtf.append("- Wortl" + rtfUnicode(228) + "ngenverteilung: \\b ").append(formatDouble(result.getWortlaengenverteilung())).append("\\b0\\par\n");
-        rtf.append("- Mittlere Satzl" + rtfUnicode(228) + "nge: \\b ").append(formatDouble(result.getMittlereSatzlaenge())).append(" W" + rtfUnicode(246) + "rter\\b0\\par\n");
-        rtf.append("- Satzl" + rtfUnicode(228) + "ngenunterschied: \\b ").append(formatDouble(result.getSatzlaengenunterschied())).append("\\b0\\par\n");
-        rtf.append("- Funktionsw" + rtfUnicode(246) + "rter-Anteil: \\b ").append(formatPercent(result.getFunktionswoerterAnteil())).append("\\b0\\par\n");
-        rtf.append("- F" + rtfUnicode(252) + "llwort-Anteil: \\b ").append(formatPercent(result.getFuellwoerterAnteil())).append("\\b0\\par\n");
-        rtf.append("- Type-Token-Ratio (Wortvielfalt): \\b ").append(formatDouble(result.getTypeTokenRatio())).append("\\b0\\par\n");
-        rtf.append("- Lesbarkeitsindex (LIX): \\b ").append(formatDouble(result.getLesbarkeitsindex())).append("\\b0\\par\n");
-        rtf.append("- Mittleres Sentiment: \\b ").append(formatDouble(result.getMittleresSentiment())).append("\\b0\\par\n");
-        rtf.append("- Hapax Legomena: \\b ").append(result.getHapaxLegomena()).append("\\b0\\par\n");
-        rtf.append("- Adjektiv-Verb-Quotient: \\b ").append(formatDouble(result.getAdjektivVerbQuotient())).append("\\b0\\par\n");
+        rtf.append("- Abs" + rtfUnicode(228) + "tze: \\b ").append(result.absatzAnzahl()).append("\\b0\\par\n");
+        rtf.append("- S" + rtfUnicode(228) + "tze: \\b ").append(result.satzAnzahl()).append("\\b0\\par\n");
+        rtf.append("- W" + rtfUnicode(246) + "rter: \\b ").append(result.wortAnzahl()).append("\\b0\\par\n");
+        rtf.append("- Wortl" + rtfUnicode(228) + "ngenverteilung: \\b ").append(formatDouble(result.wortlaengenverteilung())).append("\\b0\\par\n");
+        rtf.append("- Mittlere Satzl" + rtfUnicode(228) + "nge: \\b ").append(formatDouble(result.mittlereSatzlaenge())).append(" W" + rtfUnicode(246) + "rter\\b0\\par\n");
+        rtf.append("- Satzl" + rtfUnicode(228) + "ngenunterschied: \\b ").append(formatDouble(result.satzlaengenunterschied())).append("\\b0\\par\n");
+        rtf.append("- Funktionsw" + rtfUnicode(246) + "rter-Anteil: \\b ").append(formatPercent(result.funktionswoerterAnteil())).append("\\b0\\par\n");
+        rtf.append("- F" + rtfUnicode(252) + "llwort-Anteil: \\b ").append(formatPercent(result.fuellwoerterAnteil())).append("\\b0\\par\n");
+        rtf.append("- Type-Token-Ratio (Wortvielfalt): \\b ").append(formatDouble(result.typeTokenRatio())).append("\\b0\\par\n");
+        rtf.append("- Lesbarkeitsindex (LIX): \\b ").append(formatDouble(result.lesbarkeitsindex())).append("\\b0\\par\n");
+        rtf.append("- Mittleres Sentiment: \\b ").append(formatDouble(result.mittleresSentiment())).append("\\b0\\par\n");
+        rtf.append("- Hapax Legomena: \\b ").append(result.hapaxLegomena()).append("\\b0\\par\n");
+        rtf.append("- Adjektiv-Verb-Quotient: \\b ").append(formatDouble(result.adjektivVerbQuotient())).append("\\b0\\par\n");
         rtf.append("\\par\n");
 
         // Hints
-        if (result.isComparison() && !result.getHinweise().isEmpty()) {
+        if (result.comparison() && !result.hinweise().isEmpty()) {
             rtf.append("\\fs24\\b Hinweise zur Optimierung:\\b0\\fs22\\par\n");
-            for (String hinweis : result.getHinweise()) {
+            for (String hinweis : result.hinweise()) {
                 rtf.append("- ").append(escapeRtf(hinweis)).append("\\par\n");
             }
             rtf.append("\\par\n");

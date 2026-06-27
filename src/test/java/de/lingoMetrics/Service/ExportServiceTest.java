@@ -1,5 +1,7 @@
 package de.lingoMetrics.Service;
 
+import de.lingoMetrics.ApplicationContext;
+import de.lingoMetrics.Models.AnalysisResult;
 import de.lingoMetrics.Models.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -17,11 +19,11 @@ class ExportServiceTest {
     @Test
     void exportToRtf_shouldCreateValidRtfFile(@TempDir Path tempDir) throws IOException {
         // Arrange
-        ServiceManager serviceManager = ServiceManager.createDefault();
+        ServiceManager serviceManager = new ApplicationContext().getServiceManager();
         String text = "Hallo Welt. Das ist ein Test mit Füllwörtern wie 'aber' und 'bloß' und Umlauten: ä, ö, ü.";
         ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, "Artikel", true, true);
-        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
-        Document document = result.getDocument();
+        AnalysisResult result = serviceManager.analyse(request);
+        Document document = result.document();
 
         File outputFile = tempDir.resolve("test_export.rtf").toFile();
 

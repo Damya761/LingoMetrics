@@ -1,5 +1,6 @@
 package de.lingoMetrics.Service;
 
+import de.lingoMetrics.Models.AnalysisResult;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Repository.JsonReferenzRepository;
 import de.lingoMetrics.Repository.ReferenzRepository;
@@ -87,13 +88,13 @@ class AuswertungsServiceTest {
                 true
         );
 
-        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+        AnalysisResult result = serviceManager.analyse(request);
 
-        assertTrue(result.isComparison());
+        assertTrue(result.comparison());
         assertTrue(result.hasAuswertung());
-        assertEquals(60, result.getScore());
-        assertEquals("Befriedigend", result.getGesamtBewertung());
-        assertEquals(3, result.getHinweise().size());
+        assertEquals(60, result.score());
+        assertEquals("Befriedigend", result.gesamtBewertung());
+        assertEquals(3, result.hinweise().size());
     }
 
     @Test
@@ -115,13 +116,13 @@ class AuswertungsServiceTest {
                 false
         );
 
-        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+        AnalysisResult result = serviceManager.analyse(request);
 
-        assertFalse(result.isComparison());
+        assertFalse(result.comparison());
         assertFalse(result.hasAuswertung());
-        assertNull(result.getScore());
-        assertNull(result.getGesamtBewertung());
-        assertTrue(result.getHinweise().isEmpty());
+        assertNull(result.score());
+        assertNull(result.gesamtBewertung());
+        assertTrue(result.hinweise().isEmpty());
     }
 
     @Test
