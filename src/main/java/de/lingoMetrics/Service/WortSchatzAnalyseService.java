@@ -23,6 +23,7 @@ public class WortSchatzAnalyseService {
         wortTypAnalyse(document);
         sentimentAnalyse(document);
         haeufigkeitsAnalyse(document);
+        konkretheitsAnalyse(document);
     }
 
     private void funktionswoerterAnalyse(Document document){
@@ -104,6 +105,23 @@ public class WortSchatzAnalyseService {
                 .filter(wort -> wort.getInhalt() != null)
                 .filter(wort -> !wort.getInhalt().trim().isEmpty())
                 .toList();
+    }
+
+    private void konkretheitsAnalyse(Document document) {
+        List<Wort> woerter = document.getWoerter().stream()
+                .filter(w -> !w.isSatzzeichen())
+                .toList();
+
+        if (woerter.isEmpty()) return;
+
+        double summe = 0.0;
+        for (Wort wort : woerter) {
+            double k = wordRepository.getKonkretheit(wort.getInhalt());
+            wort.setKonkretheit(k);
+            summe += k;
+        }
+
+        document.setMittlereKonkretheit(summe / woerter.size());
     }
 
     private double calculateAnteil(long treffer, int gesamt) {
