@@ -17,7 +17,7 @@ public class WortSchatzAnalyseService {
         this.wordRepository = wordRepository;
     }
 
-    public void Analyze(Document document){
+    public void analyze(Document document){
         funktionswoerterAnalyse(document);
         fuellwoerterAnalyse(document);
         wortTypAnalyse(document);

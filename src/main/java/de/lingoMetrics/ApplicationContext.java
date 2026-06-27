@@ -18,7 +18,7 @@ public class ApplicationContext {
         this.serviceManager = new ServiceManager(
                 new TextStrukturService(),
                 List.of(
-                        new WortSchatzAnalyseService(wordRepository)::Analyze,
+                        new WortSchatzAnalyseService(wordRepository)::analyze,
                         new TextStatisticsService()::analyze
                 ),
                 new AuswertungsService(new JsonReferenzRepository())

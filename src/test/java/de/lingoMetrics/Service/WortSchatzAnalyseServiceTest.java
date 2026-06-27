@@ -25,7 +25,7 @@ class WortSchatzAnalyseServiceTest {
 
         WortSchatzAnalyseService service = new WortSchatzAnalyseService(new FakeWordRepository());
 
-        service.Analyze(document);
+        service.analyze(document);
 
         assertEquals(0.25, document.getFunktionswoerterAnteil(), 0.0001);
         assertEquals(0.25, document.getFuellwoerterAnteil(), 0.0001);
