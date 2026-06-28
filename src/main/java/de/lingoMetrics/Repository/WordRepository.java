@@ -1,75 +1,105 @@
 package de.lingoMetrics.Repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.lingoMetrics.Enums.WortTyp;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WordRepository {
-    private List<DBword> funktionswoerter;
-    private List<DBword> fuellwoerter;
-    private List<DBword> sentimentindex;
-    private List<DBword> verben;
-    private List<DBword> adjektive;
+
+    private Set<String> funktionswoerter;
+    private Set<String> fuellwoerter;
+    private Set<String> adjektive;
+    private Set<String> verben;
+    private Map<String, Double> sentimentindex;
+    private Map<String, Double> konkretheitsindex;
+
     public void load() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        try(InputStream Adjektiv = getClass().getResourceAsStream("/Datasets/Adjektiv.json");
-            InputStream Fillwords = getClass().getResourceAsStream("/Datasets/Fillwords.json");
-            InputStream sentiWS = getClass().getResourceAsStream("/Datasets/sentiWS.json");
-            InputStream Stopwords = getClass().getResourceAsStream("/Datasets/Stopwords.json");
-            InputStream Verb = getClass().getResourceAsStream("/Datasets/Verb.json");){
-            this.funktionswoerter = mapper.readValue(Stopwords, new TypeReference<List<DBword>>(){});
-            this.fuellwoerter = mapper.readValue(Fillwords, new TypeReference<List<DBword>>(){});
-            this.sentimentindex = mapper.readValue(sentiWS, new TypeReference<List<DBword>>(){});
-            this.adjektive = mapper.readValue(Adjektiv, new TypeReference<List<DBword>>(){});
-            this.verben = mapper.readValue(Verb, new TypeReference<List<DBword>>(){});
+        funktionswoerter  = loadWordSet("/Datasets/Stopwords.csv");
+        fuellwoerter      = loadWordSet("/Datasets/Fillwords.csv");
+        adjektive         = loadWordSet("/Datasets/Adjektiv.csv");
+        verben            = loadWordSet("/Datasets/Verb.csv");
+        sentimentindex    = loadSentimentMap("/Datasets/sentiWS.csv");
+        konkretheitsindex = loadKonkretheitsMap("/Datasets/konkretheitsindex.csv");
+    }
+
+    private Set<String> loadWordSet(String resourcePath) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath);
+             BufferedReader reader = new BufferedReader(
+                     new InputStreamReader(is, StandardCharsets.UTF_8))) {
+
+            return reader.lines()
+                    .map(String::trim)
+                    .filter(line -> !line.isBlank())
+                    .collect(Collectors.toCollection(HashSet::new));
         }
     }
 
+    private Map<String, Double> loadSentimentMap(String resourcePath) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath);
+             BufferedReader reader = new BufferedReader(
+                     new InputStreamReader(is, StandardCharsets.UTF_8))) {
 
-    public boolean isFunktionswort(String wort){
-        if(funktionswoerter.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
-            return true;
-        }else{
-            return false;
+            return reader.lines()
+                    .skip(1)                           // Header überspringen
+                    .map(String::trim)
+                    .filter(line -> !line.isBlank())
+                    .map(line -> line.split(",", 2))
+                    .filter(parts -> parts.length == 2)
+                    .collect(Collectors.toMap(
+                            parts -> parts[0].trim(),
+                            parts -> Double.parseDouble(parts[1].trim()),
+                            (a, b) -> a                // Duplikate: ersten behalten
+                    ));
         }
     }
 
-    public boolean isFuellwort(String wort){
-        if(fuellwoerter.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
-            return true;
-        }else{
-            return false;
+    private Map<String, Double> loadKonkretheitsMap(String resourcePath) throws IOException {
+        //  Konkretheit -> [0..1]
+        try (InputStream is = getClass().getResourceAsStream(resourcePath);
+             BufferedReader reader = new BufferedReader(
+                     new InputStreamReader(is, StandardCharsets.UTF_8))) {
+
+            return reader.lines()
+                    .skip(1)                           // Header: "Word, AbstConc, Arou, IMG, Val"
+                    .map(String::trim)
+                    .filter(line -> !line.isBlank())
+                    .map(line -> line.split(","))
+                    .filter(parts -> parts.length >= 2)
+                    .collect(Collectors.toMap(
+                            parts -> parts[0].trim().toLowerCase(),
+                            parts -> {
+                                double abstConc = Double.parseDouble(parts[1].trim());
+                                return (8.0 - abstConc) / 6.0;
+                            },
+                            (a, b) -> a
+                    ));
         }
     }
 
-    public double getSentiment(String wort){
-        List<DBword> sentimentWort = sentimentindex.stream()
-                .filter(w -> equalsIgnoreCase(w.getWort(), wort))
-                .toList();
-        if(sentimentWort.isEmpty()){
-            return 0.0;
-        }
-        else {
-            return sentimentWort.getFirst().getValue();
-        }
+    // --- Lookups ---
+
+    public boolean isFunktionswort(String wort) {
+        return funktionswoerter.contains(wort.toLowerCase());
     }
 
-    public WortTyp getWortTyp(String wort){
-        if(verben.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
-            return WortTyp.TYP_VERB;
-        }else if(adjektive.stream().anyMatch(w -> equalsIgnoreCase(w.getWort(), wort))){
-            return WortTyp.TYP_ADJEKTIV;
-        }else{
-            return WortTyp.TYP_OTHER;
-        }
+    public boolean isFuellwort(String wort) {
+        return fuellwoerter.contains(wort.toLowerCase());
     }
 
-    private boolean equalsIgnoreCase(String reference, String input) {
-        return reference != null && input != null && reference.equalsIgnoreCase(input);
+    public double getSentiment(String wort) {
+        return sentimentindex.getOrDefault(wort.toLowerCase(), 0.0);
     }
 
+    public WortTyp getWortTyp(String wort) {
+        if (verben.contains(wort.toLowerCase()))    return WortTyp.TYP_VERB;
+        if (adjektive.contains(wort.toLowerCase())) return WortTyp.TYP_ADJEKTIV;
+        return WortTyp.TYP_OTHER;
+    }
+
+    public double getKonkretheit(String wort) {
+        return konkretheitsindex.getOrDefault(wort.toLowerCase(), 0.0);
+    }
 }

@@ -1,0 +1,246 @@
+[
+    {
+        "stiltyp": "Artikel",
+        "metriken": {
+            "absatzAnzahl": {
+                "mittelwert": 1.0,
+                "standardabweichung": 0.0
+            },
+            "satzAnzahl": {
+                "mittelwert": 26.68,
+                "standardabweichung": 27.3436
+            },
+            "wortAnzahl": {
+                "mittelwert": 408.72,
+                "standardabweichung": 365.2633
+            },
+            "mittlereSatzlaenge": {
+                "mittelwert": 15.9593,
+                "standardabweichung": 3.2024
+            },
+            "satzlaengenunterschied": {
+                "mittelwert": 9.162,
+                "standardabweichung": 2.7458
+            },
+            "wortlaengenverteilung": {
+                "mittelwert": 6.0908,
+                "standardabweichung": 0.4216
+            },
+            "funktionswoerterAnteil": {
+                "mittelwert": 0.4284,
+                "standardabweichung": 0.0445
+            },
+            "fuellwoerterAnteil": {
+                "mittelwert": 0.4239,
+                "standardabweichung": 0.0476
+            },
+            "typeTokenRatio": {
+                "mittelwert": 0.5282,
+                "standardabweichung": 0.0984
+            },
+            "lesbarkeitsindex": {
+                "mittelwert": 51.0668,
+                "standardabweichung": 5.8694
+            },
+            "mittleresSentiment": {
+                "mittelwert": -0.0026,
+                "standardabweichung": 0.0055
+            },
+            "hapaxLegomena": {
+                "mittelwert": 191.93,
+                "standardabweichung": 120.5354
+            },
+            "adjektivVerbQuotient": {
+                "mittelwert": 0.1388,
+                "standardabweichung": 0.0896
+            },
+            "mittlereKonkretheit": {
+                "mittelwert": 0.4099,
+                "standardabweichung": 0.0331
+            }
+        }
+    },
+    {
+        "stiltyp": "Mail",
+        "metriken": {
+            "absatzAnzahl": {
+                "mittelwert": 1.0,
+                "standardabweichung": 0.0
+            },
+            "satzAnzahl": {
+                "mittelwert": 76.2245,
+                "standardabweichung": 66.2496
+            },
+            "wortAnzahl": {
+                "mittelwert": 816.4082,
+                "standardabweichung": 699.5312
+            },
+            "mittlereSatzlaenge": {
+                "mittelwert": 10.9171,
+                "standardabweichung": 1.3506
+            },
+            "satzlaengenunterschied": {
+                "mittelwert": 7.7106,
+                "standardabweichung": 1.3949
+            },
+            "wortlaengenverteilung": {
+                "mittelwert": 6.0146,
+                "standardabweichung": 0.1891
+            },
+            "funktionswoerterAnteil": {
+                "mittelwert": 0.3157,
+                "standardabweichung": 0.0314
+            },
+            "fuellwoerterAnteil": {
+                "mittelwert": 0.3355,
+                "standardabweichung": 0.0328
+            },
+            "typeTokenRatio": {
+                "mittelwert": 0.4119,
+                "standardabweichung": 0.1357
+            },
+            "lesbarkeitsindex": {
+                "mittelwert": 45.9723,
+                "standardabweichung": 2.6812
+            },
+            "mittleresSentiment": {
+                "mittelwert": 0.0058,
+                "standardabweichung": 0.0047
+            },
+            "hapaxLegomena": {
+                "mittelwert": 261.3061,
+                "standardabweichung": 137.9928
+            },
+            "adjektivVerbQuotient": {
+                "mittelwert": 0.1701,
+                "standardabweichung": 0.064
+            },
+            "mittlereKonkretheit": {
+                "mittelwert": 0.3448,
+                "standardabweichung": 0.0176
+            }
+        }
+    },
+    {
+        "stiltyp": "Geschichte",
+        "metriken": {
+            "absatzAnzahl": {
+                "mittelwert": 1.0,
+                "standardabweichung": 0.0
+            },
+            "satzAnzahl": {
+                "mittelwert": 14.6276,
+                "standardabweichung": 3.039
+            },
+            "wortAnzahl": {
+                "mittelwert": 148.5655,
+                "standardabweichung": 31.9654
+            },
+            "mittlereSatzlaenge": {
+                "mittelwert": 10.2828,
+                "standardabweichung": 1.8306
+            },
+            "satzlaengenunterschied": {
+                "mittelwert": 4.2365,
+                "standardabweichung": 1.2889
+            },
+            "wortlaengenverteilung": {
+                "mittelwert": 4.6825,
+                "standardabweichung": 0.2315
+            },
+            "funktionswoerterAnteil": {
+                "mittelwert": 0.5147,
+                "standardabweichung": 0.0384
+            },
+            "fuellwoerterAnteil": {
+                "mittelwert": 0.4596,
+                "standardabweichung": 0.0435
+            },
+            "typeTokenRatio": {
+                "mittelwert": 0.4687,
+                "standardabweichung": 0.0672
+            },
+            "lesbarkeitsindex": {
+                "mittelwert": 27.5317,
+                "standardabweichung": 4.8653
+            },
+            "mittleresSentiment": {
+                "mittelwert": 0.007,
+                "standardabweichung": 0.0097
+            },
+            "hapaxLegomena": {
+                "mittelwert": 68.9172,
+                "standardabweichung": 14.864
+            },
+            "adjektivVerbQuotient": {
+                "mittelwert": 0.163,
+                "standardabweichung": 0.0843
+            },
+            "mittlereKonkretheit": {
+                "mittelwert": 0.3136,
+                "standardabweichung": 0.0336
+            }
+        }
+    },
+    {
+        "stiltyp": "Wissenschaftliche Arbeit",
+        "metriken": {
+            "absatzAnzahl": {
+                "mittelwert": 1.0,
+                "standardabweichung": 0.0
+            },
+            "satzAnzahl": {
+                "mittelwert": 57.2468,
+                "standardabweichung": 57.1358
+            },
+            "wortAnzahl": {
+                "mittelwert": 1311.8182,
+                "standardabweichung": 1309.4277
+            },
+            "mittlereSatzlaenge": {
+                "mittelwert": 21.9517,
+                "standardabweichung": 4.4561
+            },
+            "satzlaengenunterschied": {
+                "mittelwert": 17.3876,
+                "standardabweichung": 6.5583
+            },
+            "wortlaengenverteilung": {
+                "mittelwert": 4.7855,
+                "standardabweichung": 0.4003
+            },
+            "funktionswoerterAnteil": {
+                "mittelwert": 0.4511,
+                "standardabweichung": 0.0314
+            },
+            "fuellwoerterAnteil": {
+                "mittelwert": 0.3278,
+                "standardabweichung": 0.0375
+            },
+            "typeTokenRatio": {
+                "mittelwert": 0.4017,
+                "standardabweichung": 0.1598
+            },
+            "lesbarkeitsindex": {
+                "mittelwert": 46.9773,
+                "standardabweichung": 4.5296
+            },
+            "mittleresSentiment": {
+                "mittelwert": -0.0007,
+                "standardabweichung": 0.0037
+            },
+            "hapaxLegomena": {
+                "mittelwert": 375.961,
+                "standardabweichung": 308.6396
+            },
+            "adjektivVerbQuotient": {
+                "mittelwert": 0.1751,
+                "standardabweichung": 0.1049
+            },
+            "mittlereKonkretheit": {
+                "mittelwert": 0.3403,
+                "standardabweichung": 0.0242
+            }
+        }
+    }
+]

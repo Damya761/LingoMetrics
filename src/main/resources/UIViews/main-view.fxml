@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
-<?import javafx.geometry.Insets?>
-<?import javafx.collections.FXCollections?>
-
+<?import java.lang.String?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.lingoMetrics.UILogik.MainViewController"
@@ -107,14 +104,19 @@
                             </GridPane>
 
 
-                            <HBox styleClass="action-row"
-                                  spacing="12.0" >
+                            <HBox styleClass="action-row" spacing="12.0" alignment="CENTER_LEFT">
                                 <Button styleClass="primary-button"
                                         text="Analysieren"
                                         onAction="#onClickAnalyzeSimple" />
                                 <Button styleClass="secondary-button"
-                                        text="Erstelle eine Rich-Text-Datei"
+                                        text="Gesamtbericht exportieren"
                                         onAction="#onClickExportSimple" />
+                                <ComboBox fx:id="metrikComboBox"
+                                          prefWidth="200.0"
+                                          promptText="Metrik wählen..." />
+                                <Button styleClass="secondary-button"
+                                        text="Metrik exportieren"
+                                        onAction="#onClickExportMetrik" />
                             </HBox>
 
                             <TextArea fx:id="outputArea" styleClass="output-area"

@@ -4,6 +4,7 @@ import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Wort;
 import de.lingoMetrics.Repository.WordRepository;
+import de.lingoMetrics.Service.analysis.WortSchatzAnalyseService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,11 +26,12 @@ class WortSchatzAnalyseServiceTest {
 
         WortSchatzAnalyseService service = new WortSchatzAnalyseService(new FakeWordRepository());
 
-        service.Analyze(document);
+        service.analyze(document);
 
         assertEquals(0.25, document.getFunktionswoerterAnteil(), 0.0001);
         assertEquals(0.25, document.getFuellwoerterAnteil(), 0.0001);
         assertEquals(-0.0145, document.getMittleresSentiment(), 0.0001);
+        assertEquals(-0.0145, document.getMittlereKonkretheit(), 0.0001);
     }
 
     private Wort createWord(String inhalt, boolean satzzeichen) {
@@ -53,6 +55,11 @@ class WortSchatzAnalyseServiceTest {
 
         @Override
         public double getSentiment(String wort) {
+            return "abbau".equalsIgnoreCase(wort) ? -0.058 : 0.0;
+        }
+
+        @Override
+        public double getKonkretheit(String wort) {
             return "abbau".equalsIgnoreCase(wort) ? -0.058 : 0.0;
         }
 

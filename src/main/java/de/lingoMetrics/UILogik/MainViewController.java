@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Locale;
+
+import de.lingoMetrics.Enums.Metrik;
+import de.lingoMetrics.Main;
+import de.lingoMetrics.Models.AnalysisResult;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -25,11 +30,13 @@ public class MainViewController {
     private ServiceManager serviceManager;
     @FXML
     private void initialize() {
-        try {
-            serviceManager = ServiceManager.createDefault();
-        } catch (IOException e) {
-            throw new RuntimeException("ServiceManager konnte nicht initialisiert werden.", e);
-        }
+        this.serviceManager = Main.getContext().getServiceManager();
+
+        metrikComboBox.getItems().addAll(
+                Arrays.stream(Metrik.values())
+                        .map(Enum::name)
+                        .toList()
+        );
     }
 
 
@@ -49,6 +56,9 @@ public class MainViewController {
 
     @FXML
     private javafx.scene.control.ComboBox<String> styleComboBox;
+
+    @FXML
+    private javafx.scene.control.ComboBox<String> metrikComboBox;
 
     @FXML
     private javafx.scene.control.TextArea outputArea;
@@ -79,12 +89,12 @@ public class MainViewController {
         }
 
         if (text == null || text.isBlank()) {
-            System.out.println("Kein Text zur Analyse (einfach) gefunden.");
+            showErrorAlert("Fehlende Eingabe", "Bitte einen Text eingeben oder eine Datei laden.");
             return;
         }
 
         ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, null, false, false);
-        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+        AnalysisResult result = serviceManager.analyse(request);
         if (outputArea != null) {
             outputArea.setText(formatResult(result));
         }
@@ -183,55 +193,55 @@ public class MainViewController {
         String style = styleComboBox != null ? styleComboBox.getValue() : null;
 
         if (text == null || text.isBlank()) {
-            System.out.println("Kein Text zur Analyse (Vergleich) gefunden.");
+            showErrorAlert("Fehlende Eingabe", "Bitte einen Text eingeben oder eine Datei laden.");
             return;
         }
 
         ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, style, false, true);
-        ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+        AnalysisResult result = serviceManager.analyse(request);
         if (outputAreaCompare != null) {
             outputAreaCompare.setText(formatResult(result));
         }
     }
 
-    private String formatResult(ServiceManager.AnalysisResult r) {
+    private String formatResult(AnalysisResult r) {
         if (r == null) return "Keine Ergebnisse.";
         StringBuilder sb = new StringBuilder();
 
         sb.append("Basisdaten\n");
-        appendLine(sb, "Absätze", r.getAbsatzAnzahl());
-        appendLine(sb, "Sätze", r.getSatzAnzahl());
-        appendLine(sb, "Wörter", r.getWortAnzahl());
+        appendLine(sb, "Absätze", r.absatzAnzahl());
+        appendLine(sb, "Sätze", r.satzAnzahl());
+        appendLine(sb, "Wörter", r.wortAnzahl());
 
         sb.append("\nMetriken\n");
-        appendLine(sb, "Wortlängenverteilung", formatDouble(r.getWortlaengenverteilung()));
-        appendLine(sb, "Mittlere Satzlänge", formatDouble(r.getMittlereSatzlaenge()));
-        appendLine(sb, "Satzlängenunterschied", formatDouble(r.getSatzlaengenunterschied()));
-        appendLine(sb, "Funktionswörteranteil", formatDouble(r.getFunktionswoerterAnteil()));
-        appendLine(sb, "Füllwortanteil", formatDouble(r.getFuellwoerterAnteil()));
-        appendLine(sb, "Type-Token-Ratio", formatDouble(r.getTypeTokenRatio()));
-        appendLine(sb, "Lesbarkeitsindex", formatDouble(r.getLesbarkeitsindex()));
-        appendLine(sb, "Mittleres Sentiment", formatDouble(r.getMittleresSentiment()));
-        appendLine(sb, "Hapax Legomena", r.getHapaxLegomena());
-        appendLine(sb, "Adjektiv-Verb-Quotient", formatDouble(r.getAdjektivVerbQuotient()));
-        //appendLine(sb, "Mittlere Konkretheit", formatDouble(r.getMittlereKonkretheit()));
+        appendLine(sb, "Wortlängenverteilung", formatDouble(r.wortlaengenverteilung()));
+        appendLine(sb, "Mittlere Satzlänge", formatDouble(r.mittlereSatzlaenge()));
+        appendLine(sb, "Satzlängenunterschied", formatDouble(r.satzlaengenunterschied()));
+        appendLine(sb, "Funktionswörteranteil", formatDouble(r.funktionswoerterAnteil()));
+        appendLine(sb, "Füllwortanteil", formatDouble(r.fuellwoerterAnteil()));
+        appendLine(sb, "Type-Token-Ratio", formatDouble(r.typeTokenRatio()));
+        appendLine(sb, "Lesbarkeitsindex", formatDouble(r.lesbarkeitsindex()));
+        appendLine(sb, "Mittleres Sentiment", formatDouble(r.mittleresSentiment()));
+        appendLine(sb, "Hapax Legomena", r.hapaxLegomena());
+        appendLine(sb, "Adjektiv-Verb-Quotient", formatDouble(r.adjektivVerbQuotient()));
+        appendLine(sb, "Mittlere Konkretheit", formatDouble(r.mittlereKonkretheit()));
 
         sb.append("\nInterpunktion\n");
-        if (r.getInterpunktion().isEmpty()) {
+        if (r.interpunktion().isEmpty()) {
             sb.append("- keine Satzzeichen erkannt\n");
         } else {
-            r.getInterpunktion().forEach((zeichen, anzahl) ->
+            r.interpunktion().forEach((zeichen, anzahl) ->
                     sb.append("- ").append(zeichen).append(": ").append(anzahl).append("\n")
             );
         }
 
         if (r.hasAuswertung()) {
             sb.append("\nAuswertung\n");
-            appendLine(sb, "Score", r.getScore());
-            appendLine(sb, "Bewertung", r.getGesamtBewertung());
-            if (!r.getHinweise().isEmpty()) {
+            appendLine(sb, "Score", r.score());
+            appendLine(sb, "Bewertung", r.gesamtBewertung());
+            if (!r.hinweise().isEmpty()) {
                 sb.append("Hinweise:\n");
-                for (String hinweis : r.getHinweise()) {
+                for (String hinweis : r.hinweise()) {
                     sb.append("- ").append(hinweis).append("\n");
                 }
             } else {
@@ -347,7 +357,7 @@ public class MainViewController {
 
         try {
             ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, null, true, false);
-            ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+            AnalysisResult result = serviceManager.analyse(request);
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Rich-Text-Datei speichern");
@@ -363,12 +373,52 @@ public class MainViewController {
             Stage stage = (Stage) mainPane.getScene().getWindow();
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
-                ExportService.exportToRtf(result.getDocument(), result, text, file);
+                ExportService.exportToRtf(result.document(), result, text, file);
                 showInfoAlert("Export erfolgreich", "Die Analyse wurde erfolgreich als RTF-Datei exportiert.");
             }
         } catch (Exception e) {
             e.printStackTrace();
             showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onClickExportMetrik() {
+        String text = selectedFileSimple != null ? readFile(selectedFileSimple)
+                : textArea.getText();
+        if (text == null || text.isBlank()) {
+            showErrorAlert("Export Fehler", "Kein Text zum Exportieren gefunden.");
+            return;
+        }
+
+        String metrikName = metrikComboBox.getValue();
+        if (metrikName == null) {
+            showErrorAlert("Export Fehler", "Bitte eine Metrik auswählen.");
+            return;
+        }
+
+        Metrik metrik = Metrik.valueOf(metrikName);
+
+        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, null, false, false);
+        AnalysisResult result = serviceManager.analyse(request);
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Rich-Text-Datei speichern");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Rich Text Format", "*.rtf"));
+        fileChooser.setInitialFileName("lingometrics_" + metrikName.toLowerCase() + ".rtf");
+        File documents = new File(System.getProperty("user.home"), "Documents");
+        if (documents.exists()) fileChooser.setInitialDirectory(documents);
+
+        Stage stage = (Stage) mainPane.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try {
+                ExportService.exportMetrikToRtf(result.document(), metrik, file);
+                showInfoAlert("Export erfolgreich", "Metrik-Export wurde gespeichert.");
+            } catch (IOException e) {
+                showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+            }
         }
     }
 
@@ -390,7 +440,7 @@ public class MainViewController {
 
         try {
             ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, style, true, true);
-            ServiceManager.AnalysisResult result = serviceManager.analyse(request);
+            AnalysisResult result = serviceManager.analyse(request);
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Rich-Text-Datei speichern");
@@ -406,7 +456,7 @@ public class MainViewController {
             Stage stage = (Stage) mainPane.getScene().getWindow();
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
-                ExportService.exportToRtf(result.getDocument(), result, text, file);
+                ExportService.exportToRtf(result.document(), result, text, file);
                 showInfoAlert("Export erfolgreich", "Der Vergleich wurde erfolgreich als RTF-Datei exportiert.");
             }
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package de.lingoMetrics.Service;
+package de.lingoMetrics.Service.analysis;
 
 import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
@@ -11,18 +11,19 @@ import java.util.Objects;
 
 
 public class WortSchatzAnalyseService {
-    public final WordRepository wordRepository;
+    private final WordRepository wordRepository;
 
     public WortSchatzAnalyseService(WordRepository wordRepository){
         this.wordRepository = wordRepository;
     }
 
-    public void Analyze(Document document){
+    public void analyze(Document document){
         funktionswoerterAnalyse(document);
         fuellwoerterAnalyse(document);
         wortTypAnalyse(document);
         sentimentAnalyse(document);
         haeufigkeitsAnalyse(document);
+        konkretheitsAnalyse(document);
     }
 
     private void funktionswoerterAnalyse(Document document){
@@ -80,16 +81,17 @@ public class WortSchatzAnalyseService {
         document.setFuellwoerterAnteil(calculateAnteil(fuellwoerter, normaleWoerter.size()));
     }
 
-    private void haeufigkeitsAnalyse(Document document){
+    private void haeufigkeitsAnalyse(Document document) {
+        List<Wort> normaleWoerter = filterNormaleWoerter(document); // statt getWoerter()
         HashMap<String, Integer> woerter = new HashMap<>();
-        for(Wort wort : document.getWoerter()){
+        for (Wort wort : normaleWoerter) {
             woerter.compute(wort.getInhalt(), (k, anzahl) -> anzahl == null ? 1 : anzahl + 1);
         }
-        double haeufigkeit = woerter.values()
-                .stream()
-                .filter(v -> v == 1)
-                .count();
-        document.setTypeTokenRatio(haeufigkeit / document.getWoerter().size());
+        for (Wort wort : normaleWoerter) {
+            wort.setVorkommenInText(woerter.get(wort.getInhalt()));
+        }
+        double haeufigkeit = woerter.values().stream().filter(v -> v == 1).count();
+        document.setTypeTokenRatio(haeufigkeit / normaleWoerter.size());
         document.setHapaxLegomena((int) haeufigkeit);
     }
 
@@ -104,6 +106,21 @@ public class WortSchatzAnalyseService {
                 .filter(wort -> wort.getInhalt() != null)
                 .filter(wort -> !wort.getInhalt().trim().isEmpty())
                 .toList();
+    }
+
+    private void konkretheitsAnalyse(Document document) {
+        List<Wort> woerter = filterNormaleWoerter(document);
+
+        if (woerter.isEmpty()) return;
+
+        double summe = 0.0;
+        for (Wort wort : woerter) {
+            double k = wordRepository.getKonkretheit(wort.getInhalt());
+            wort.setKonkretheit(k);
+            summe += k;
+        }
+
+        document.setMittlereKonkretheit(summe / woerter.size());
     }
 
     private double calculateAnteil(long treffer, int gesamt) {
