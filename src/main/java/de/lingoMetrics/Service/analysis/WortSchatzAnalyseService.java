@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
+//Autor: Simon Ortlieb, Tarik Marton
 public class WortSchatzAnalyseService {
     private final WordRepository wordRepository;
 

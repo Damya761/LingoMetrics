@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+//Autor: Simon Ortlieb
 public class ReferenzRepository {
 
     // Äußere Map: Stiltyp (z.B. "Mails") -> Innere Map: MetrikKey -> Stat-Objekt

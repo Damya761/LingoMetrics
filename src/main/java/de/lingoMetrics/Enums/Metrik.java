@@ -1,5 +1,6 @@
 package de.lingoMetrics.Enums;
 
+//Autor: Simon Ortlieb
 public enum Metrik {
     Füllwörteranalyse,
     SentimentAnalyse,

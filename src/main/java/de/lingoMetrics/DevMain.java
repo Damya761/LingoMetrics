@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+//Autor: Simon Ortlieb
 public class DevMain {
 
     public static void main(String[] args) throws Exception {

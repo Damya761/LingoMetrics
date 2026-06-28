@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//Autor: Tarik Marton
 public class TextStrukturService {
 
     //Das Pattern ist bewusst einfach gehalten und deckt die für unsere erste Analyseversion relevanten Grundfälle ab. Sonderfälle wie Abkürzungen, Gedankenstriche oder komplexe technische Schreibweisen können später erweitert werden, ohne die restliche Service-Struktur zu ändern.

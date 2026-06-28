@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//Autor: Simon Ortlieb
 public class WordRepository {
 
     private Set<String> funktionswoerter;

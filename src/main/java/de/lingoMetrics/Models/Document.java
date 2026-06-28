@@ -3,6 +3,7 @@ package de.lingoMetrics.Models;
 import java.util.List;
 import java.util.Map;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class Document {
     // Strukturelle Beziehungen (Listen)
     private List<Absatz> absaetze;

@@ -2,6 +2,7 @@ package de.lingoMetrics.Models;
 
 import de.lingoMetrics.Enums.WortTyp;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class Wort {
     private String inhalt;
     private int laenge;

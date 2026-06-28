@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+//Autor: Simon Ortlieb, Tarik Marton
 class WortSchatzAnalyseServiceTest {
 
     @Test

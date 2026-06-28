@@ -23,7 +23,7 @@ import de.lingoMetrics.Service.ExportService;
 import javafx.scene.control.Alert;
 
 
-
+//Autor: Simon Hauck, Tarik Marton, Simon Ortlieb
 public class MainViewController {
 
     //create/initialize ServiceManager

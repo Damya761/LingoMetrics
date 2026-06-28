@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class ExportService {
 
     public static void exportToRtf(Document doc,

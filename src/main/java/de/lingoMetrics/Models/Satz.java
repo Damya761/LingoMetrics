@@ -2,6 +2,7 @@ package de.lingoMetrics.Models;
 
 import java.util.List;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class Satz {
     private List<Wort> woerter; // Im Diagramm als "+ Wörter: Wort[]" deklariert
     private int laenge;
