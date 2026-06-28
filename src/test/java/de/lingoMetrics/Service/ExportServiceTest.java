@@ -64,9 +64,9 @@ class ExportServiceTest {
                 true,
                 85,             // score
                 10, 5, null, 0.1, 15.0, 3.5, 0.4, 0.05, 0.5, 50.0, 0.0, 2, 0.8, 0.6,
-                70,
-                "Gut",          // gesamtBewertung
-                List.of("Zu viele Füllwörter.", "Sätze zu lang.")// hinweise
+                85,
+                "Gut",
+                List.of("Zu viele Füllwörter.", "Sätze zu lang.")
         );
 
         File outputFile = tempDir.resolve("vergleich_export.rtf").toFile();
@@ -82,6 +82,6 @@ class ExportServiceTest {
         assertTrue(content.contains("Score: \\b 85 / 100\\b0"));
         assertTrue(content.contains("Gesamtbewertung: \\b Gut\\b0"));
         assertTrue(content.contains("Hinweise zur Optimierung:"));
-        assertTrue(content.contains("Zu viele Füllwörter."));
+        assertTrue(content.contains("Zu viele F\\u252?llw\\u246?rter."));
     }
 }
