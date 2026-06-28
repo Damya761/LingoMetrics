@@ -87,6 +87,9 @@ public class WortSchatzAnalyseService {
         for (Wort wort : normaleWoerter) {
             woerter.compute(wort.getInhalt(), (k, anzahl) -> anzahl == null ? 1 : anzahl + 1);
         }
+        for (Wort wort : normaleWoerter) {
+            wort.setVorkommenInText(woerter.get(wort.getInhalt()));
+        }
         double haeufigkeit = woerter.values().stream().filter(v -> v == 1).count();
         document.setTypeTokenRatio(haeufigkeit / normaleWoerter.size());
         document.setHapaxLegomena((int) haeufigkeit);

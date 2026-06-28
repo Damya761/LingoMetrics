@@ -107,14 +107,19 @@
                             </GridPane>
 
 
-                            <HBox styleClass="action-row"
-                                  spacing="12.0" >
+                            <HBox styleClass="action-row" spacing="12.0" alignment="CENTER_LEFT">
                                 <Button styleClass="primary-button"
                                         text="Analysieren"
                                         onAction="#onClickAnalyzeSimple" />
                                 <Button styleClass="secondary-button"
-                                        text="Erstelle eine Rich-Text-Datei"
+                                        text="Gesamtbericht exportieren"
                                         onAction="#onClickExportSimple" />
+                                <ComboBox fx:id="metrikComboBox"
+                                          prefWidth="200.0"
+                                          promptText="Metrik wählen..." />
+                                <Button styleClass="secondary-button"
+                                        text="Metrik exportieren"
+                                        onAction="#onClickExportMetrik" />
                             </HBox>
 
                             <TextArea fx:id="outputArea" styleClass="output-area"

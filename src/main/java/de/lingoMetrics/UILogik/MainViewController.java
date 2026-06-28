@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Locale;
 
+import de.lingoMetrics.Enums.Metrik;
 import de.lingoMetrics.Main;
 import de.lingoMetrics.Models.AnalysisResult;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -29,6 +32,12 @@ public class MainViewController {
     @FXML
     private void initialize() {
         this.serviceManager = Main.getContext().getServiceManager();
+
+        metrikComboBox.getItems().addAll(
+                Arrays.stream(Metrik.values())
+                        .map(Enum::name)
+                        .toList()
+        );
     }
 
 
@@ -48,6 +57,9 @@ public class MainViewController {
 
     @FXML
     private javafx.scene.control.ComboBox<String> styleComboBox;
+
+    @FXML
+    private javafx.scene.control.ComboBox<String> metrikComboBox;
 
     @FXML
     private javafx.scene.control.TextArea outputArea;
@@ -368,6 +380,46 @@ public class MainViewController {
         } catch (Exception e) {
             e.printStackTrace();
             showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onClickExportMetrik() {
+        String text = selectedFileSimple != null ? readFile(selectedFileSimple)
+                : textArea.getText();
+        if (text == null || text.isBlank()) {
+            showErrorAlert("Export Fehler", "Kein Text zum Exportieren gefunden.");
+            return;
+        }
+
+        String metrikName = metrikComboBox.getValue();
+        if (metrikName == null) {
+            showErrorAlert("Export Fehler", "Bitte eine Metrik auswählen.");
+            return;
+        }
+
+        Metrik metrik = Metrik.valueOf(metrikName);
+
+        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(text, null, false, false);
+        AnalysisResult result = serviceManager.analyse(request);
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Rich-Text-Datei speichern");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Rich Text Format", "*.rtf"));
+        fileChooser.setInitialFileName("lingometrics_" + metrikName.toLowerCase() + ".rtf");
+        File documents = new File(System.getProperty("user.home"), "Documents");
+        if (documents.exists()) fileChooser.setInitialDirectory(documents);
+
+        Stage stage = (Stage) mainPane.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try {
+                ExportService.exportMetrikToRtf(result.document(), metrik, file);
+                showInfoAlert("Export erfolgreich", "Metrik-Export wurde gespeichert.");
+            } catch (IOException e) {
+                showErrorAlert("Export Fehler", "Fehler beim Exportieren: " + e.getMessage());
+            }
         }
     }
 

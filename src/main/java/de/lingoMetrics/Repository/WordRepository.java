@@ -17,15 +17,13 @@ public class WordRepository {
     private Map<String, Double> konkretheitsindex;
 
     public void load() throws IOException {
-        funktionswoerter  = loadWordSet("/Datasets/stopwords.csv");
-        fuellwoerter      = loadWordSet("/Datasets/fillwords.csv");
-        adjektive         = loadWordSet("/Datasets/adjektiv.csv");
-        verben            = loadWordSet("/Datasets/verb.csv");
-        sentimentindex    = loadSentimentMap("/Datasets/sentiwort.csv");
+        funktionswoerter  = loadWordSet("/Datasets/Stopwords.csv");
+        fuellwoerter      = loadWordSet("/Datasets/Fillwords.csv");
+        adjektive         = loadWordSet("/Datasets/Adjektiv.csv");
+        verben            = loadWordSet("/Datasets/Verb.csv");
+        sentimentindex    = loadSentimentMap("/Datasets/sentiWS.csv");
         konkretheitsindex = loadKonkretheitsMap("/Datasets/konkretheitsindex.csv");
     }
-
-    // --- Loader ---
 
     private Set<String> loadWordSet(String resourcePath) throws IOException {
         try (InputStream is = getClass().getResourceAsStream(resourcePath);

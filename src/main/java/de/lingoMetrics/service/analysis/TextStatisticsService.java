@@ -25,14 +25,12 @@ public class TextStatisticsService {
         double satzlaengenunterschied = calculateSatzlaengenunterschied(saetze);
         double wortlaengenverteilung = calculateDurchschnittlicheWortlaenge(woerter);
         Map<String, Long> interpunktion = calculateInterpunktionsProfil(woerter);
-        int hapaxLegomena = calculateHapaxLegomena(woerter);
         double lesbarkeitsindex = calculateLesbarkeitsindex(saetze, woerter);
 
         document.setMittlereSatzlaenge(mittlereSatzlaenge);
         document.setSatzlaengenunterschied(satzlaengenunterschied);
         document.setWortlaengenverteilung(wortlaengenverteilung);
         document.setInterpunktion(interpunktion);
-        document.setHapaxLegomena(hapaxLegomena);
         document.setLesbarkeitsindex(lesbarkeitsindex);
     }
 
@@ -97,29 +95,6 @@ public class TextStatisticsService {
                         TreeMap::new,
                         Collectors.counting()
                 ));
-    }
-
-    private int calculateHapaxLegomena(List<Wort> woerter) {
-        List<Wort> normaleWoerter = filterNormaleWoerter(woerter);
-
-        if (normaleWoerter.isEmpty()) {
-            return 0;
-        }
-
-        Map<String, Long> wortHaeufigkeiten = normaleWoerter.stream()
-                .map(Wort::getInhalt)
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(inhalt -> !inhalt.isBlank())
-                .map(inhalt -> inhalt.toLowerCase(Locale.GERMAN))
-                .collect(Collectors.groupingBy(
-                        wort -> wort,
-                        Collectors.counting()
-                ));
-
-        return (int) wortHaeufigkeiten.values().stream()
-                .filter(anzahl -> anzahl == 1)
-                .count();
     }
 
     // LIX = Wortanzahl / Satzanzahl + lange Wörter * 100 / Wortanzahl
