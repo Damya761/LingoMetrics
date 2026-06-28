@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+//Autor: Simon Ortlieb, Damya Hennige, Simon Hauck
 public class Main extends Application {
 
 

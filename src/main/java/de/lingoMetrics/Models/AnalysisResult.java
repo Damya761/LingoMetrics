@@ -2,6 +2,7 @@ package de.lingoMetrics.Models;
 
 import java.util.*;
 
+//Autor: Simon Ortlieb
 public record AnalysisResult(
         Document document,
         String stiltyp,

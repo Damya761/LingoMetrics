@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+//Autor: Tarik Marton
 class TextStatisticsServiceTest {
 
     @Test

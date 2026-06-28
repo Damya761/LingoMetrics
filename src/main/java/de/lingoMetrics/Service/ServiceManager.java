@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class ServiceManager {
 
     private final TextStrukturService textStrukturService;

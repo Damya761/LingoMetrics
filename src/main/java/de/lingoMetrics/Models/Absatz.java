@@ -3,6 +3,7 @@ package de.lingoMetrics.Models;
 import java.util.ArrayList;
 import java.util.List;
 
+//Autor: Simon Ortlieb, Tarik Marton
 public class Absatz {
     private List<Satz> saetze = new ArrayList<>();
 

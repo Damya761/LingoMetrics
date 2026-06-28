@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//Autor: Tarik Marton
 class TextStrukturServiceTest {
 
     private final TextStrukturService textStrukturService = new TextStrukturService();

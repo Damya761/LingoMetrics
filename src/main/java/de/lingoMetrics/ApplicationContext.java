@@ -9,6 +9,7 @@ import de.lingoMetrics.Service.analysis.WortSchatzAnalyseService;
 import java.io.IOException;
 import java.util.List;
 
+//Autor: Simon Ortlieb
 public class ApplicationContext {
 
     private final ServiceManager serviceManager;

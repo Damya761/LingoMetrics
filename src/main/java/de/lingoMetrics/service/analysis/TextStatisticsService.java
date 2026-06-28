@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+//Autor: Tarik Marton
 public class TextStatisticsService {
 
     public void analyze(Document document) {
