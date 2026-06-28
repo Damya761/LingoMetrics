@@ -82,20 +82,20 @@ public class WordRepository {
     // --- Lookups ---
 
     public boolean isFunktionswort(String wort) {
-        return funktionswoerter.contains(wort);
+        return funktionswoerter.contains(wort.toLowerCase());
     }
 
     public boolean isFuellwort(String wort) {
-        return fuellwoerter.contains(wort);
+        return fuellwoerter.contains(wort.toLowerCase());
     }
 
     public double getSentiment(String wort) {
-        return sentimentindex.getOrDefault(wort, 0.0);
+        return sentimentindex.getOrDefault(wort.toLowerCase(), 0.0);
     }
 
     public WortTyp getWortTyp(String wort) {
-        if (verben.contains(wort))    return WortTyp.TYP_VERB;
-        if (adjektive.contains(wort)) return WortTyp.TYP_ADJEKTIV;
+        if (verben.contains(wort.toLowerCase()))    return WortTyp.TYP_VERB;
+        if (adjektive.contains(wort.toLowerCase())) return WortTyp.TYP_ADJEKTIV;
         return WortTyp.TYP_OTHER;
     }
 

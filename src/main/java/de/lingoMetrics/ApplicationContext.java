@@ -4,6 +4,8 @@ import de.lingoMetrics.Repository.ReferenzRepository;
 import de.lingoMetrics.Repository.WordRepository;
 import de.lingoMetrics.Service.*;
 import de.lingoMetrics.Service.analysis.TextStatisticsService;
+import de.lingoMetrics.Service.analysis.WortSchatzAnalyseService;
+
 import java.io.IOException;
 import java.util.List;
 

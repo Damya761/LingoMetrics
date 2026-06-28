@@ -1,4 +1,4 @@
-package de.lingoMetrics.Service;
+package de.lingoMetrics.Service.analysis;
 
 import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
@@ -109,9 +109,7 @@ public class WortSchatzAnalyseService {
     }
 
     private void konkretheitsAnalyse(Document document) {
-        List<Wort> woerter = document.getWoerter().stream()
-                .filter(w -> !w.isSatzzeichen())
-                .toList();
+        List<Wort> woerter = filterNormaleWoerter(document);
 
         if (woerter.isEmpty()) return;
 

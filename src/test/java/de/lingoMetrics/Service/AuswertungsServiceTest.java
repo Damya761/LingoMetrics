@@ -85,7 +85,7 @@ class AuswertungsServiceTest {
 
         // Verhindert, dass das Fake-Repo beim Testen versucht, die echte JSON zu laden
         public FakeReferenzRepository() {
-            super();
+            super(true);
         }
 
         @Override

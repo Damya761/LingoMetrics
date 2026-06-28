@@ -16,6 +16,10 @@ public class ReferenzRepository {
         load();
     }
 
+    protected ReferenzRepository(boolean skipLoad) {
+        // leer — für Testdoubles
+    }
+
     private void load() {
         try {
             ObjectMapper mapper = new ObjectMapper();

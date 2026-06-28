@@ -4,6 +4,7 @@ import de.lingoMetrics.Enums.WortTyp;
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Wort;
 import de.lingoMetrics.Repository.WordRepository;
+import de.lingoMetrics.Service.analysis.WortSchatzAnalyseService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

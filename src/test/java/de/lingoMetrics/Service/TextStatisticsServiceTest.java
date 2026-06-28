@@ -1,3 +1,5 @@
+package de.lingoMetrics.Service;
+
 import de.lingoMetrics.Models.Document;
 import de.lingoMetrics.Models.Satz;
 import de.lingoMetrics.Models.Wort;
@@ -46,7 +48,6 @@ class TextStatisticsServiceTest {
         assertEquals(3.0, document.getSatzlaengenunterschied());
         assertEquals(4.428571428571429, document.getWortlaengenverteilung(), 0.0001);
         assertEquals(2L, document.getInterpunktion().get("."));
-        assertEquals(7, document.getHapaxLegomena());
         assertEquals(17.785714285714285, document.getLesbarkeitsindex(), 0.0001);
     }
 

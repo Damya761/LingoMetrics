@@ -90,7 +90,7 @@ public class MainViewController {
         }
 
         if (text == null || text.isBlank()) {
-            System.out.println("Kein Text zur Analyse (einfach) gefunden.");
+            showErrorAlert("Fehlende Eingabe", "Bitte einen Text eingeben oder eine Datei laden.");
             return;
         }
 
@@ -194,7 +194,7 @@ public class MainViewController {
         String style = styleComboBox != null ? styleComboBox.getValue() : null;
 
         if (text == null || text.isBlank()) {
-            System.out.println("Kein Text zur Analyse (Vergleich) gefunden.");
+            showErrorAlert("Fehlende Eingabe", "Bitte einen Text eingeben oder eine Datei laden.");
             return;
         }
 

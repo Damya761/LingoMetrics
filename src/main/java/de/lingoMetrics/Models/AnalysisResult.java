@@ -37,54 +37,10 @@ public record AnalysisResult(
                 : List.copyOf(hinweise);
     }
 
-    public static AnalysisResult from(
-            Document document,
-            ServiceManager.AnalysisRequest request,
-            Integer score,
-            String gesamtBewertung,
-            List<String> hinweise
-    ) {
-        Map<String, Long> interpunktion = document.getInterpunktion() == null
-                ? Map.of()
-                : document.getInterpunktion();
 
-        return new AnalysisResult(
-                document,
-                request.getStiltyp(),
-                request.isExport(),
-                request.isComparison(),
-                document.getAbsaetze() == null ? 0 : document.getAbsaetze().size(),
-                document.getSaetze() == null ? 0 : document.getSaetze().size(),
-                countNormaleWoerter(document),
-                interpunktion,
-                document.getWortlaengenverteilung(),
-                document.getMittlereSatzlaenge(),
-                document.getSatzlaengenunterschied(),
-                document.getFunktionswoerterAnteil(),
-                document.getFuellwoerterAnteil(),
-                document.getTypeTokenRatio(),
-                document.getLesbarkeitsindex(),
-                document.getMittleresSentiment(),
-                document.getHapaxLegomena(),
-                document.getAdjektivVerbQuotient(),
-                document.getMittlereKonkretheit(),
-                score,
-                gesamtBewertung,
-                hinweise
-        );
-    }
 
     public boolean hasAuswertung() {
         return score != null;
     }
 
-    private static int countNormaleWoerter(Document document) {
-        if (document.getWoerter() == null) return 0;
-
-        return (int) document.getWoerter()
-                .stream()
-                .filter(Objects::nonNull)
-                .filter(wort -> !wort.isSatzzeichen())
-                .count();
-    }
 }

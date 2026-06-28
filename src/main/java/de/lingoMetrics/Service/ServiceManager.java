@@ -5,6 +5,7 @@ import de.lingoMetrics.Models.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -48,7 +49,7 @@ public class ServiceManager {
             hinweise = auswertungsHinweise;
         }
 
-        return AnalysisResult.from(document, request, score, gesamtBewertung, hinweise);
+        return createResult(document, request, score, gesamtBewertung, hinweise);
     }
 
     private void validateRequest(AnalysisRequest request) {
@@ -93,5 +94,52 @@ public class ServiceManager {
         public boolean isComparison() {
             return comparison;
         }
+    }
+
+    public static AnalysisResult createResult(
+            Document document,
+            ServiceManager.AnalysisRequest request,
+            Integer score,
+            String gesamtBewertung,
+            List<String> hinweise
+    ) {
+        Map<String, Long> interpunktion = document.getInterpunktion() == null
+                ? Map.of()
+                : document.getInterpunktion();
+
+        return new AnalysisResult(
+                document,
+                request.getStiltyp(),
+                request.isExport(),
+                request.isComparison(),
+                document.getAbsaetze() == null ? 0 : document.getAbsaetze().size(),
+                document.getSaetze() == null ? 0 : document.getSaetze().size(),
+                countNormaleWoerter(document),
+                interpunktion,
+                document.getWortlaengenverteilung(),
+                document.getMittlereSatzlaenge(),
+                document.getSatzlaengenunterschied(),
+                document.getFunktionswoerterAnteil(),
+                document.getFuellwoerterAnteil(),
+                document.getTypeTokenRatio(),
+                document.getLesbarkeitsindex(),
+                document.getMittleresSentiment(),
+                document.getHapaxLegomena(),
+                document.getAdjektivVerbQuotient(),
+                document.getMittlereKonkretheit(),
+                score,
+                gesamtBewertung,
+                hinweise
+        );
+    }
+
+    private static int countNormaleWoerter(Document document) {
+        if (document.getWoerter() == null) return 0;
+
+        return (int) document.getWoerter()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(wort -> !wort.isSatzzeichen())
+                .count();
     }
 }
