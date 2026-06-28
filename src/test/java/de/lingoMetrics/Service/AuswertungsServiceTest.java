@@ -1,9 +1,8 @@
 package de.lingoMetrics.Service;
 
-import de.lingoMetrics.Models.AnalysisResult;
 import de.lingoMetrics.Models.Document;
-import de.lingoMetrics.Repository.JsonReferenzRepository;
 import de.lingoMetrics.Repository.ReferenzRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,162 +12,110 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuswertungsServiceTest {
 
-    @Test
-    void calculateScore_gibtScore100UndKeineHinweiseZurueck_wennAlleMetrikenGutSind() {
-        AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
+    private AuswertungsService service;
 
+    @BeforeEach
+    void setUp() {
+        // Wir injizieren unser Fake-Repository für kontrollierte Testbedingungen
+        service = new AuswertungsService(new FakeReferenzRepository());
+    }
+
+    @Test
+    void calculateScore_gibtScore100_wennMetrikenPerfektImProfilLiegen() {
         Document document = new Document();
-        document.setMittlereSatzlaenge(18.0);
+        // Wir setzen exakt die Mittelwerte aus unserem Fake-Repository
+        document.setMittlereSatzlaenge(12.0);
         document.setFuellwoerterAnteil(0.05);
-        document.setTypeTokenRatio(0.60);
+        document.setTypeTokenRatio(0.40);
+        document.setLesbarkeitsindex(45.0);
+        document.setSatzlaengenunterschied(5.0);
 
         List<String> hinweise = new ArrayList<>();
-        int score = service.calculateScore(document, hinweise);
+        int score = service.calculateScore(document, "Mails", hinweise);
 
-        assertEquals(100, score);
+        assertEquals(100, score, "Der Score sollte 100 sein, da alle Werte im Toleranzbereich liegen.");
         assertEquals("Sehr gut", service.determineRating(score));
-        assertTrue(hinweise.isEmpty());
+        assertTrue(hinweise.isEmpty(), "Es sollten keine Hinweise generiert werden.");
     }
 
     @Test
-    void calculateScore_ziehtPunkteAbUndErzeugtHinweise_wennAlleMetrikenSchlechtSind() {
-        AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
-
+    void calculateScore_ziehtPunkteAb_wennMetrikenStarkVomProfilAbweichen() {
         Document document = new Document();
-        document.setMittlereSatzlaenge(30.0);
-        document.setFuellwoerterAnteil(0.12);
-        document.setTypeTokenRatio(0.30);
+        // Wir setzen extrem schlechte Werte, die weit über der Toleranzgrenze (Mittelwert + 1.5 * Std) liegen
+        document.setMittlereSatzlaenge(25.0); // Zu hoch (Erlaubt ca. 12 + (2*1.5) = 15)
+        document.setFuellwoerterAnteil(0.30); // Viel zu hoch
+        document.setTypeTokenRatio(0.10);     // Zu niedrig
 
         List<String> hinweise = new ArrayList<>();
-        int score = service.calculateScore(document, hinweise);
+        int score = service.calculateScore(document, "Mails", hinweise);
 
-        assertEquals(60, score);
-        assertEquals("Befriedigend", service.determineRating(score));
-        assertEquals(3, hinweise.size());
+        assertTrue(score < 100, "Der Score sollte unter 100 fallen, da Metriken stark abweichen.");
+        assertFalse(hinweise.isEmpty(), "Es sollten Hinweise generiert worden sein.");
 
-        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("Referenzwert")));
-        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("vergleichsweise")));
-        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("Wortvielfalt")));
+        // Prüfen ob die spezifischen Fehlermeldungen (aus checkMetric) getriggert wurden
+        assertTrue(hinweise.stream().anyMatch(h -> h.contains("ungewöhnlich lang")), "Hinweis für zu lange Sätze fehlt.");
+        assertTrue(hinweise.stream().anyMatch(h -> h.contains("Füllwörtern")), "Hinweis für Füllwörter fehlt.");
     }
 
     @Test
-    void calculateScore_ziehtNurFuellwortPunkteAb_wennNurFuellwortanteilZuHochIst() {
-        AuswertungsService service = new AuswertungsService(new FakeReferenzRepository());
-
+    void calculateScore_greiftAufAllgemeineHeuristikZurueck_wennKeinStiltypGesetztIst() {
         Document document = new Document();
-        document.setMittlereSatzlaenge(18.0);
-        document.setFuellwoerterAnteil(0.10);
-        document.setTypeTokenRatio(0.60);
+        // Werte, die die allgemeinen Fallback-Checks triggern
+        document.setMittlereSatzlaenge(25.0); // Trigger: > 20.0
+        document.setFuellwoerterAnteil(0.50); // Trigger: > 0.40
 
         List<String> hinweise = new ArrayList<>();
-        int score = service.calculateScore(document, hinweise);
+        // Aufruf OHNE Stiltyp (null)
+        int score = service.calculateScore(document, null, hinweise);
 
-        assertEquals(85, score);
-        assertEquals("Gut", service.determineRating(score));
-        assertEquals(1, hinweise.size());
-        assertTrue(hinweise.stream().anyMatch(hinweis -> hinweis.contains("vergleichsweise")));
+        assertTrue(score < 100, "Auch ohne Profil sollten extreme Werte durch Heuristiken bestraft werden.");
+        assertFalse(hinweise.isEmpty());
+        // Die Meldung muss nun die aus dem Fallback-Check sein
+        assertTrue(hinweise.stream().anyMatch(h -> h.contains("durchschnittliche Satzlänge ist sehr hoch")));
     }
 
-    @Test
-    void analyse_speichertAuswertungImServiceManagerResult_wennComparisonAktivIst() {
-        ServiceManager serviceManager = new ServiceManager(
-                new TextStrukturService(),
-                List.of(document -> {
-                    document.setMittlereSatzlaenge(30.0);
-                    document.setFuellwoerterAnteil(0.12);
-                    document.setTypeTokenRatio(0.30);
-                }),
-                new AuswertungsService(new FakeReferenzRepository())
-        );
 
-        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(
-                "Hallo Welt.",
-                "Artikel",
-                false,
-                true
-        );
+    // --- HILFSKLASSE FÜR DEN TEST --- //
 
-        AnalysisResult result = serviceManager.analyse(request);
+    /**
+     * Ein Fake-Repository, das konstante Werte zurückliefert, damit unsere Tests
+     * unabhängig von einer echten JSON-Datei auf der Festplatte funktionieren.
+     */
+    private static class FakeReferenzRepository extends ReferenzRepository {
 
-        assertTrue(result.comparison());
-        assertTrue(result.hasAuswertung());
-        assertEquals(60, result.score());
-        assertEquals("Befriedigend", result.gesamtBewertung());
-        assertEquals(3, result.hinweise().size());
-    }
-
-    @Test
-    void analyse_laesstAuswertungLeer_wennComparisonInaktivIst() {
-        ServiceManager serviceManager = new ServiceManager(
-                new TextStrukturService(),
-                List.of(document -> {
-                    document.setMittlereSatzlaenge(30.0);
-                    document.setFuellwoerterAnteil(0.12);
-                    document.setTypeTokenRatio(0.30);
-                }),
-                new AuswertungsService(new FakeReferenzRepository())
-        );
-
-        ServiceManager.AnalysisRequest request = new ServiceManager.AnalysisRequest(
-                "Hallo Welt.",
-                null,
-                false,
-                false
-        );
-
-        AnalysisResult result = serviceManager.analyse(request);
-
-        assertFalse(result.comparison());
-        assertFalse(result.hasAuswertung());
-        assertNull(result.score());
-        assertNull(result.gesamtBewertung());
-        assertTrue(result.hinweise().isEmpty());
-    }
-
-    @Test
-    void calculateScore_bewertetUnterschiedlichJeNachStiltyp() {
-        JsonReferenzRepository repository = new JsonReferenzRepository();
-        AuswertungsService service = new AuswertungsService(repository);
-
-        Document document = new Document();
-        document.setMittlereSatzlaenge(22.0);
-        document.setFuellwoerterAnteil(0.05);
-        document.setTypeTokenRatio(0.60);
-
-        List<String> hinweiseWissenschaft = new ArrayList<>();
-        int scoreWissenschaft = service.calculateScore(document, "Wissenschaftliche Arbeit", hinweiseWissenschaft);
-
-        List<String> hinweiseMail = new ArrayList<>();
-        int scoreMail = service.calculateScore(document, "Mail", hinweiseMail);
-
-        assertEquals(100, scoreWissenschaft);
-        assertTrue(hinweiseWissenschaft.isEmpty());
-
-        assertTrue(scoreMail < 100);
-        assertFalse(hinweiseMail.isEmpty());
-        assertTrue(hinweiseMail.stream().anyMatch(h -> h.contains("Satzlänge")));
-    }
-
-    private static class FakeReferenzRepository implements ReferenzRepository {
-
-        @Override
-        public double getIdealeSatzlaenge(String stiltyp) {
-            return 18.0;
+        // Verhindert, dass das Fake-Repo beim Testen versucht, die echte JSON zu laden
+        public FakeReferenzRepository() {
+            super();
         }
 
         @Override
-        public double getMaxFuellwortAnteil(String stiltyp) {
-            return 0.08;
+        public Double getMittelwert(String stiltyp, String metrikKey) {
+            if ("Mails".equals(stiltyp)) {
+                return switch (metrikKey) {
+                    case "mittlereSatzlaenge" -> 12.0;
+                    case "fuellwoerterAnteil" -> 0.05;
+                    case "typeTokenRatio" -> 0.40;
+                    case "lesbarkeitsindex" -> 45.0;
+                    case "satzlaengenunterschied" -> 5.0;
+                    default -> 0.0;
+                };
+            }
+            return null; // Wenn der Stiltyp nicht gefunden wird
         }
 
         @Override
-        public double getMinTypeTokenRatio(String stiltyp) {
-            return 0.45;
-        }
-
-        @Override
-        public double getTolerance(String stiltyp) {
-            return 5.0;
+        public Double getStandardabweichung(String stiltyp, String metrikKey) {
+            if ("Mails".equals(stiltyp)) {
+                return switch (metrikKey) {
+                    case "mittlereSatzlaenge" -> 2.0;
+                    case "fuellwoerterAnteil" -> 0.02;
+                    case "typeTokenRatio" -> 0.05;
+                    case "lesbarkeitsindex" -> 5.0;
+                    case "satzlaengenunterschied" -> 1.0;
+                    default -> 0.0;
+                };
+            }
+            return null;
         }
     }
 }

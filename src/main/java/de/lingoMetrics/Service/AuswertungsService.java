@@ -24,11 +24,8 @@ public class AuswertungsService {
         Objects.requireNonNull(doc, "Document must not be null.");
         Objects.requireNonNull(hinweise, "Hinweise list must not be null.");
 
-        // 1. Sammeln der Metriken mit den exakten Schlüsseln aus unserem JSON-Format
         Map<String, Double> metriken = aggregateMetrics(doc);
         int score = 100;
-
-        // 2. Dynamische Auswertung aller Parameter
 
         // Satzlänge (Gewichtung: 15 Punkte)
         score -= checkMetric(metriken, "mittlereSatzlaenge", stiltyp, hinweise, 15,
@@ -48,8 +45,8 @@ public class AuswertungsService {
                 "Die Wortvielfalt (Type-Token-Ratio) ist untypisch niedrig für diesen Stil.",
                 val -> val < 0.25 ? "Die Wortvielfalt ist gering. Versuchen Sie, Wortwiederholungen zu reduzieren." : null);
 
-        // Lesbarkeitsindex (Gewichtung: 10 Punkte)
-        score -= checkMetric(metriken, "lesbarkeitsindex", stiltyp, hinweise, 10,
+        // Lesbarkeitsindex (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "lesbarkeitsindex", stiltyp, hinweise, 5,
                 "Der Text ist deutlich schwerer lesbar (hoher LIX) als für diesen Typ üblich.",
                 "Der Text ist auffällig simpler geschrieben als für diesen Typ üblich.",
                 val -> val > 60.0 ? "Der Text ist extrem schwer verständlich (hoher LIX). Bandwurmsätze aufbrechen!" : null);
@@ -66,14 +63,14 @@ public class AuswertungsService {
                 null,
                 val -> val > 0.55 ? "Der Anteil an Funktionswörtern ist sehr hoch. Nutzen Sie stärkere Nomen und Verben." : null);
 
-        // Sentiment (Gewichtung: 5 Punkte)
-        score -= checkMetric(metriken, "mittleresSentiment", stiltyp, hinweise, 5,
+        // Sentiment (Gewichtung: 10 Punkte)
+        score -= checkMetric(metriken, "mittleresSentiment", stiltyp, hinweise, 10,
                 "Der Text ist deutlich positiver/wertender als für diesen Stil üblich.",
                 "Der Text ist deutlich negativer/kritischer als für diesen Stil üblich.",
                 val -> Math.abs(val) > 0.5 ? "Der Text wirkt sprachlich sehr stark emotional/wertend." : null);
 
-        // Konkretheit (Gewichtung: 5 Punkte)
-        score -= checkMetric(metriken, "mittlereKonkretheit", stiltyp, hinweise, 5,
+        // Konkretheit (Gewichtung: 10 Punkte)
+        score -= checkMetric(metriken, "mittlereKonkretheit", stiltyp, hinweise, 10,
                 null,
                 "Der Text verwendet deutlich mehr abstrakte Begriffe als für diesen Stil üblich.",
                 val -> val < 0.35 ? "Der Text ist sehr abstrakt geschrieben. Greifbare Beispiele erhöhen die Verständlichkeit." : null);
