@@ -10,7 +10,6 @@ import java.util.Locale;
 import de.lingoMetrics.Enums.Metrik;
 import de.lingoMetrics.Main;
 import de.lingoMetrics.Models.AnalysisResult;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;

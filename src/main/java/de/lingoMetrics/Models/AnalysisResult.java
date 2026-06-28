@@ -1,7 +1,5 @@
 package de.lingoMetrics.Models;
 
-import de.lingoMetrics.Service.ServiceManager;
-
 import java.util.*;
 
 public record AnalysisResult(
