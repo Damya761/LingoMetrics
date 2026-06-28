@@ -1,6 +1,6 @@
 package de.lingoMetrics;
 
-import de.lingoMetrics.Repository.JsonReferenzRepository;
+import de.lingoMetrics.Repository.ReferenzRepository;
 import de.lingoMetrics.Repository.WordRepository;
 import de.lingoMetrics.Service.*;
 import de.lingoMetrics.Service.analysis.TextStatisticsService;
@@ -21,7 +21,7 @@ public class ApplicationContext {
                         new WortSchatzAnalyseService(wordRepository)::analyze,
                         new TextStatisticsService()::analyze
                 ),
-                new AuswertungsService(new JsonReferenzRepository())
+                new AuswertungsService(new ReferenzRepository())
         );
     }
 

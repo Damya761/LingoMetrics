@@ -24,135 +24,114 @@ public class AuswertungsService {
         Objects.requireNonNull(doc, "Document must not be null.");
         Objects.requireNonNull(hinweise, "Hinweise list must not be null.");
 
+        // 1. Sammeln der Metriken mit den exakten Schlüsseln aus unserem JSON-Format
         Map<String, Double> metriken = aggregateMetrics(doc);
-
-        return calculateScore(metriken, stiltyp, hinweise);
-    }
-
-    private Map<String, Double> aggregateMetrics(Document doc) {
-        Map<String, Double> metriken = new HashMap<>();
-
-        metriken.put("Wortlängenverteilung", doc.getWortlaengenverteilung());
-        metriken.put("Mittlere Satzlänge", doc.getMittlereSatzlaenge());
-        metriken.put("Satzlängenunterschied", doc.getSatzlaengenunterschied());
-        metriken.put("Funktionswörteranteil", doc.getFunktionswoerterAnteil());
-        metriken.put("Füllwortanteil", doc.getFuellwoerterAnteil());
-        metriken.put("Type-Token-Ratio", doc.getTypeTokenRatio());
-        metriken.put("Lesbarkeitsindex", doc.getLesbarkeitsindex());
-        metriken.put("Mittleres Sentiment", doc.getMittleresSentiment());
-        metriken.put("Hapax Legomena", (double) doc.getHapaxLegomena());
-        metriken.put("Adjektiv-Verb-Quotient", doc.getAdjektivVerbQuotient());
-        metriken.put("Mittlere Konkretheit", doc.getMittlereKonkretheit());
-
-        return metriken;
-    }
-
-    private int calculateScore(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
         int score = 100;
 
-        score -= evaluateSentenceLength(metriken, stiltyp, hinweise);
-        score -= evaluateFillerWords(metriken, stiltyp, hinweise);
-        score -= evaluateVocabulary(metriken, stiltyp, hinweise);
-        score -= evaluateReadability(metriken, hinweise);
-        score -= evaluateSentenceVariation(metriken, hinweise);
-        score -= evaluateFunctionWords(metriken, hinweise);
-        score -= evaluateSentiment(metriken, hinweise);
-        score -= evaluateConcreteness(metriken, hinweise);
-        score -= evaluateAdjectiveVerbRatio(metriken, hinweise);
-        score -= evaluateHapaxLegomena(metriken, hinweise);
+        // 2. Dynamische Auswertung aller Parameter
+
+        // Satzlänge (Gewichtung: 15 Punkte)
+        score -= checkMetric(metriken, "mittlereSatzlaenge", stiltyp, hinweise, 15,
+                "Die Sätze sind für diesen Texttyp ungewöhnlich lang.",
+                "Die Sätze sind für diesen Texttyp ungewöhnlich kurz.",
+                val -> val > 20.0 ? "Die durchschnittliche Satzlänge ist sehr hoch. Kürzere Sätze verbessern die Lesbarkeit." : null);
+
+        // Füllwörter (Gewichtung: 15 Punkte)
+        score -= checkMetric(metriken, "fuellwoerterAnteil", stiltyp, hinweise, 15,
+                "Der Anteil an Füllwörtern ist für diesen Stil untypisch hoch.",
+                null, // Zu wenig Füllwörter bestrafen wir in der Regel nicht
+                val -> val > 0.40 ? "Der Text enthält relativ viele Füllwörter. Ein direkterer Schreibstil wirkt professioneller." : null);
+
+        // Wortvielfalt / TTR (Gewichtung: 10 Punkte)
+        score -= checkMetric(metriken, "typeTokenRatio", stiltyp, hinweise, 10,
+                null,
+                "Die Wortvielfalt (Type-Token-Ratio) ist untypisch niedrig für diesen Stil.",
+                val -> val < 0.25 ? "Die Wortvielfalt ist gering. Versuchen Sie, Wortwiederholungen zu reduzieren." : null);
+
+        // Lesbarkeitsindex (Gewichtung: 10 Punkte)
+        score -= checkMetric(metriken, "lesbarkeitsindex", stiltyp, hinweise, 10,
+                "Der Text ist deutlich schwerer lesbar (hoher LIX) als für diesen Typ üblich.",
+                "Der Text ist auffällig simpler geschrieben als für diesen Typ üblich.",
+                val -> val > 60.0 ? "Der Text ist extrem schwer verständlich (hoher LIX). Bandwurmsätze aufbrechen!" : null);
+
+        // Satzlängenunterschied (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "satzlaengenunterschied", stiltyp, hinweise, 5,
+                null,
+                "Die Satzlängen variieren untypisch wenig, der Text wirkt für diesen Stil zu monoton.",
+                val -> val < 3.0 ? "Die Satzlängen variieren kaum. Mischen Sie kurze und lange Sätze für mehr Dynamik." : null);
+
+        // Funktionswörter (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "funktionswoerterAnteil", stiltyp, hinweise, 5,
+                "Der Text enthält ungewöhnlich viele grammatikalische Funktionswörter.",
+                null,
+                val -> val > 0.55 ? "Der Anteil an Funktionswörtern ist sehr hoch. Nutzen Sie stärkere Nomen und Verben." : null);
+
+        // Sentiment (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "mittleresSentiment", stiltyp, hinweise, 5,
+                "Der Text ist deutlich positiver/wertender als für diesen Stil üblich.",
+                "Der Text ist deutlich negativer/kritischer als für diesen Stil üblich.",
+                val -> Math.abs(val) > 0.5 ? "Der Text wirkt sprachlich sehr stark emotional/wertend." : null);
+
+        // Konkretheit (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "mittlereKonkretheit", stiltyp, hinweise, 5,
+                null,
+                "Der Text verwendet deutlich mehr abstrakte Begriffe als für diesen Stil üblich.",
+                val -> val < 0.35 ? "Der Text ist sehr abstrakt geschrieben. Greifbare Beispiele erhöhen die Verständlichkeit." : null);
+
+        // Adjektiv-Verb-Quotient (Gewichtung: 5 Punkte)
+        score -= checkMetric(metriken, "adjektivVerbQuotient", stiltyp, hinweise, 5,
+                "Der Text ist extrem stark beschreibend (viele Adjektive) für diesen Stil.",
+                null,
+                val -> val > 1.2 ? "Es werden verhältnismäßig viele Adjektive genutzt. Verben erzeugen mehr Handlung." : null);
 
         return Math.max(score, 0);
     }
 
-    private int evaluateSentenceLength(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
-        double mittlereSatzlaenge = metriken.get("Mittlere Satzlänge");
-        double idealeSatzlaenge = referenzRepository.getIdealeSatzlaenge(stiltyp);
-        double tolerance = referenzRepository.getTolerance(stiltyp);
-
-        if (Math.abs(mittlereSatzlaenge - idealeSatzlaenge) > tolerance) {
-            hinweise.add("Die durchschnittliche Satzlänge weicht deutlich vom Referenzwert ab.");
-            return 15;
-        }
-
-        return 0;
+    private Map<String, Double> aggregateMetrics(Document doc) {
+        Map<String, Double> metriken = new HashMap<>();
+        // Die Keys matchen ab sofort EXAKT mit der JSON-Struktur der Referenzprofile
+        metriken.put("mittlereSatzlaenge", doc.getMittlereSatzlaenge());
+        metriken.put("fuellwoerterAnteil", doc.getFuellwoerterAnteil());
+        metriken.put("typeTokenRatio", doc.getTypeTokenRatio());
+        metriken.put("lesbarkeitsindex", doc.getLesbarkeitsindex());
+        metriken.put("satzlaengenunterschied", doc.getSatzlaengenunterschied());
+        metriken.put("funktionswoerterAnteil", doc.getFunktionswoerterAnteil());
+        metriken.put("mittleresSentiment", doc.getMittleresSentiment());
+        metriken.put("mittlereKonkretheit", doc.getMittlereKonkretheit());
+        metriken.put("adjektivVerbQuotient", doc.getAdjektivVerbQuotient());
+        metriken.put("wortlaengenverteilung", doc.getWortlaengenverteilung());
+        return metriken;
     }
 
-    private int evaluateFillerWords(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
-        if (metriken.get("Füllwortanteil") > referenzRepository.getMaxFuellwortAnteil(stiltyp)) {
-            hinweise.add("Der Text enthält vergleichsweise viele Füllwörter.");
-            return 15;
+    private int checkMetric(Map<String, Double> metriken, String metricKey, String stiltyp,
+                            List<String> hinweise, int penalty,
+                            String tooHighMsg, String tooLowMsg,
+                            FallbackCheck fallbackCheck) {
+
+        double actual = metriken.getOrDefault(metricKey, 0.0);
+
+        if (stiltyp != null && !stiltyp.isEmpty() && referenzRepository != null) {
+            Double mean = referenzRepository.getMittelwert(stiltyp, metricKey);
+            Double std = referenzRepository.getStandardabweichung(stiltyp, metricKey);
+
+            if (mean != null && std != null) {
+                double tolerance = Math.max(std * 1.5, Math.abs(mean * 0.05));
+
+                if (actual > mean + tolerance) {
+                    if (tooHighMsg != null) hinweise.add(tooHighMsg);
+                    return penalty;
+                } else if (actual < mean - tolerance) {
+                    if (tooLowMsg != null) hinweise.add(tooLowMsg);
+                    return penalty;
+                }
+                return 0;
+            }
         }
 
-        return 0;
-    }
-
-    private int evaluateVocabulary(Map<String, Double> metriken, String stiltyp, List<String> hinweise) {
-        if (metriken.get("Type-Token-Ratio") < referenzRepository.getMinTypeTokenRatio(stiltyp)) {
-            hinweise.add("Die Wortvielfalt ist eher niedrig.");
-            return 10;
-        }
-
-        return 0;
-    }
-
-    private int evaluateReadability(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Lesbarkeitsindex") > 0 && metriken.get("Lesbarkeitsindex") < 40) {
-            hinweise.add("Der Lesbarkeitsindex ist niedrig. Der Text könnte schwer verständlich sein.");
-            return 10;
-        }
-
-        return 0;
-    }
-
-    private int evaluateSentenceVariation(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Satzlängenunterschied") > 0 && metriken.get("Satzlängenunterschied") < 3) {
-            hinweise.add("Die Satzlängen variieren nur wenig.");
-            return 5;
-        }
-
-        return 0;
-    }
-
-    private int evaluateFunctionWords(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Funktionswörteranteil") > 0.60) {
-            hinweise.add("Der Anteil an Funktionswörtern ist relativ hoch.");
-            return 5;
-        }
-
-        return 0;
-    }
-
-    private int evaluateSentiment(Map<String, Double> metriken, List<String> hinweise) {
-        if (Math.abs(metriken.get("Mittleres Sentiment")) > 0.5) {
-            hinweise.add("Der Text wirkt sprachlich stark wertend.");
-            return 5;
-        }
-
-        return 0;
-    }
-
-    private int evaluateConcreteness(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Mittlere Konkretheit") > 0 && metriken.get("Mittlere Konkretheit") < 0.4) {
-            hinweise.add("Der Text verwendet viele abstrakte Begriffe.");
-            return 5;
-        }
-
-        return 0;
-    }
-
-    private int evaluateAdjectiveVerbRatio(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Adjektiv-Verb-Quotient") > 1.5) {
-            hinweise.add("Der Text enthält verhältnismäßig viele beschreibende Formulierungen.");
-            return 5;
-        }
-
-        return 0;
-    }
-
-    private int evaluateHapaxLegomena(Map<String, Double> metriken, List<String> hinweise) {
-        if (metriken.get("Hapax Legomena") > 0 && metriken.get("Hapax Legomena") < 5) {
-            hinweise.add("Die Wortvielfalt könnte erhöht werden.");
-            return 3;
+        String fallbackMsg = fallbackCheck.evaluate(actual);
+        if (fallbackMsg != null) {
+            hinweise.add(fallbackMsg);
+            return penalty;
         }
 
         return 0;
@@ -164,5 +143,10 @@ public class AuswertungsService {
         if (score >= 60) return "Befriedigend";
         if (score >= 40) return "Verbesserungswürdig";
         return "Kritisch";
+    }
+
+    @FunctionalInterface
+    private interface FallbackCheck {
+        String evaluate(double actualValue);
     }
 }
