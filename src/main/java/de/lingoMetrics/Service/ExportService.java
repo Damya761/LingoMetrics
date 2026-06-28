@@ -108,6 +108,9 @@ public class ExportService {
         int lastEnd = 0;
         int wordIndex = 0;
         List<Wort> words = doc.getWoerter();
+        if(words == null){
+            return;
+        }
         Matcher matcher = TextStrukturService.TOKEN_PATTERN.matcher(rawText);
 
         while (matcher.find() && wordIndex < words.size()) {
